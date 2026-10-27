@@ -7,8 +7,8 @@ export function meta() {
 
 export default function NotFound() {
   return (
-    <SiteShell>
-      <section className="mx-auto flex max-w-[1320px] flex-col items-start gap-5 px-10 pt-[clamp(140px,16vw,220px)] pb-[clamp(80px,10vw,128px)]">
+    <SiteShell variant="solid">
+      <section className="mx-auto flex max-w-[1320px] flex-col items-start gap-5 px-[clamp(20px,3vw,40px)] pt-[clamp(140px,16vw,220px)] pb-[clamp(80px,10vw,128px)]">
         <span className="text-xs font-semibold tracking-[0.14em] text-ink-muted uppercase">Error 404</span>
         <h1 className="m-0 text-[clamp(44px,6vw,88px)] leading-none font-normal tracking-[-0.03em] text-balance">
           This page is off the shelf.
