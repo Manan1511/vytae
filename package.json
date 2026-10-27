@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "VYTAE storefront",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --test \"netlify/functions/lib/*.test.ts\"",
     "dev": "react-router dev",
     "build": "react-router build",
     "typecheck": "react-router typegen && tsc --noEmit"
