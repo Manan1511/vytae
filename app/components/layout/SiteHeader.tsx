@@ -22,16 +22,18 @@ function useScrolled(threshold: number) {
   return scrolled;
 }
 
-export function SiteHeader() {
+export function SiteHeader({ variant = "hero", active }: { variant?: "hero" | "solid"; active?: string }) {
   const scrolled = useScrolled(40);
+  const solid = variant === "solid" || scrolled;
   const bagCount = useBagCount();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <header
       className={[
-        "sticky top-0 z-30 -mb-14 h-14 transition-[background-color,color,box-shadow] duration-[400ms] ease-in-out",
-        scrolled
+        "sticky top-0 z-30 h-14 transition-[background-color,color,box-shadow] duration-[400ms] ease-in-out",
+        variant === "hero" ? "-mb-14" : "",
+        solid
           ? "bg-[rgba(246,249,253,0.95)] text-ink shadow-[0_8px_24px_-20px_rgba(27,54,93,0.35)] backdrop-blur-[12px]"
           : "bg-transparent text-white",
       ].join(" ")}
@@ -65,7 +67,7 @@ export function SiteHeader() {
             <Link
               key={link.to}
               to={link.to}
-              className="border-b border-transparent py-1.5 [color:inherit] transition-colors duration-[250ms] hover:border-current"
+              className={`border-b py-1.5 [color:inherit] transition-colors duration-[250ms] hover:border-current ${link.label === active ? "border-ink" : "border-transparent"}`}
             >
               {link.label}
             </Link>
