@@ -1,5 +1,5 @@
 import { useEffect, type ReactNode } from "react";
-import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from "react-router";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation, type LinkDescriptor } from "react-router";
 import { initAnalytics, trackPageView } from "./lib/analytics";
 import { CartProvider } from "./lib/cart";
 import { MotionFx } from "./lib/motion";
@@ -8,6 +8,15 @@ import "@fontsource/hanken-grotesk/500.css";
 import "@fontsource/hanken-grotesk/600.css";
 import "@fontsource/hanken-grotesk/700.css";
 import "./styles/app.css";
+
+// The SVG is the modern icon. The .ico and touch icon cover older browsers and iOS.
+export function links(): LinkDescriptor[] {
+  return [
+    { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+    { rel: "icon", href: "/favicon.ico", sizes: "32x32" },
+    { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+  ];
+}
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
