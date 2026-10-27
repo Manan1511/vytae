@@ -199,7 +199,7 @@ export default function AboutPage() {
                   <span className="text-[13px] font-semibold text-ink-muted">{s.n}</span>
                   <span className="flex flex-col gap-1">
                     <span className="text-lg">{s.t}</span>
-                    <span className="text-[15px] leading-[1.55] text-[#5f7797]">{s.d}</span>
+                    <span className="text-[15px] leading-[1.55] text-ink-soft">{s.d}</span>
                   </span>
                 </Reveal>
               ))}

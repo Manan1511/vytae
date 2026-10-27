@@ -698,7 +698,7 @@ function Handover({ from, to }: { from: string; to: string }) {
       <span />
       <span className="h-9 w-px justify-self-center bg-[#cddbeb]" />
       <span />
-      <span className="justify-self-end text-[11px] font-bold tracking-[0.16em] whitespace-nowrap text-[#6d87a8] uppercase">Handover</span>
+      <span className="justify-self-end text-[11px] font-bold tracking-[0.16em] whitespace-nowrap text-ink-muted uppercase">Handover</span>
       <span className="z-[1] flex h-3.5 w-3.5 items-center justify-center justify-self-center rounded-full border border-[#16a34a] bg-white">
         <span className="h-1.5 w-1.5 rounded-full bg-[#16a34a]" />
       </span>
@@ -706,7 +706,7 @@ function Handover({ from, to }: { from: string; to: string }) {
         <span>
           {from} <span className="text-[#9fb3cc]">→</span> {to}
         </span>
-        <span className="text-xs text-[#6d87a8]">Cleared [DD MMM YYYY]</span>
+        <span className="text-xs text-ink-muted">Cleared [DD MMM YYYY]</span>
       </span>
     </div>
   );

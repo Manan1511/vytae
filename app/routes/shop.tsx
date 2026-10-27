@@ -127,7 +127,7 @@ export default function ShopPage() {
             id="search"
             className="flex w-[min(100%,340px)] items-center gap-2.5 rounded-full border border-line bg-white px-[18px] py-3"
           >
-            <Stroke size={15} strokeWidth={1.8} className="text-[#6d87a8]">
+            <Stroke size={15} strokeWidth={1.8} className="text-ink-muted">
               <circle cx="11" cy="11" r="7" />
               <path d="M20 20l-4-4" />
             </Stroke>
