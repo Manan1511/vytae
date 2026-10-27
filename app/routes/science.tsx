@@ -4,13 +4,15 @@ import { SiteShell } from "../components/layout/SiteShell";
 import { Eyebrow } from "../components/ui/Eyebrow";
 import { FEATURED, SCIENCE_CATEGORIES } from "../content/science";
 import { loadPosts } from "../lib/catalog";
+import { seoMeta } from "../lib/seo";
 import { Reveal } from "../lib/motion";
 
 export function meta() {
-  return [
-    { title: "Science | VYTAE" },
-    { name: "description", content: "Clear writing on ingredients, quality and everyday rituals." },
-  ];
+  return seoMeta({
+    title: "Science | VYTAE",
+    description: "Clear writing on ingredients, quality and everyday rituals.",
+    path: "/science",
+  });
 }
 
 export async function loader() {

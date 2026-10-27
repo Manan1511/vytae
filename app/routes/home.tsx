@@ -9,15 +9,15 @@ import { Standard } from "../components/home/Standard";
 import { Ugc } from "../components/home/Ugc";
 import { SiteShell } from "../components/layout/SiteShell";
 import { homeArticles, loadCatalog, loadHero, loadPosts, loadTestimonials } from "../lib/catalog";
+import { organizationLd, seoMeta, websiteLd } from "../lib/seo";
 
 export function meta() {
-  return [
-    { title: "VYTAE · Life, Absorbed." },
-    {
-      name: "description",
-      content: "Purposeful, science-led supplements, formulated around what your body can absorb.",
-    },
-  ];
+  return seoMeta({
+    title: "VYTAE · Life, Absorbed.",
+    description: "Purposeful, science-led supplements, formulated around what your body can absorb.",
+    path: "/",
+    jsonLd: [organizationLd(), websiteLd()],
+  });
 }
 
 export async function loader() {

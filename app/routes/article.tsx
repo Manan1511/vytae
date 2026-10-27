@@ -2,6 +2,7 @@ import { Link, useLoaderData } from "react-router";
 import { SiteShell } from "../components/layout/SiteShell";
 import { loadArticle, type ArticleView } from "../lib/catalog";
 import { Reveal } from "../lib/motion";
+import { articleLd, breadcrumbLd, seoMeta } from "../lib/seo";
 import NotFoundPage from "./not-found";
 
 async function loadArticleRoute(slug: string | undefined) {
@@ -30,7 +31,23 @@ clientLoader.hydrate = true;
 
 export function meta({ loaderData }: { loaderData?: { article: ArticleView | null } }) {
   const post = loaderData?.article?.post;
-  return [{ title: post ? `${post.title} | VYTAE` : "Page not found | VYTAE" }];
+  if (!post) return [{ title: "Page not found | VYTAE" }];
+  const path = `/science/${post.slug}`;
+  return seoMeta({
+    title: `${post.title} | VYTAE`,
+    description: post.desc,
+    path,
+    image: post.image,
+    type: "article",
+    jsonLd: [
+      articleLd(post, path),
+      breadcrumbLd([
+        { name: "Home", path: "/" },
+        { name: "Science", path: "/science" },
+        { name: post.title, path },
+      ]),
+    ],
+  });
 }
 
 // The body is HTML from Shopify, so the styles reach into its elements.

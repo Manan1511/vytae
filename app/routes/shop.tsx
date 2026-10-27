@@ -6,6 +6,7 @@ import { ComingSoonCard, ShopCard } from "../components/shop/ShopGrid";
 import { BRAND_PATHS } from "../components/ui/brand";
 import { Fill, Stroke } from "../components/ui/icons";
 import { trackViewItemList } from "../lib/analytics";
+import { seoMeta } from "../lib/seo";
 import { loadCatalog, loadShopBanners } from "../lib/catalog";
 import { Reveal } from "../lib/motion";
 
@@ -15,10 +16,11 @@ export async function loader() {
 }
 
 export function meta() {
-  return [
-    { title: "Shop | VYTAE" },
-    { name: "description", content: "Considered formulas, tested batch by batch." },
-  ];
+  return seoMeta({
+    title: "Shop | VYTAE",
+    description: "Considered formulas, tested batch by batch.",
+    path: "/shop",
+  });
 }
 
 // Categories match the product's `categories` list. The two placeholder categories have no products yet.

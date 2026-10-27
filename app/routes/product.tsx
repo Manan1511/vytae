@@ -15,6 +15,7 @@ import {
 import type { Product } from "../content/products";
 import { useSavedCartStore } from "../lib/cart";
 import { trackViewItem } from "../lib/analytics";
+import { breadcrumbLd, faqLd, productLd, seoMeta } from "../lib/seo";
 import { loadCatalog } from "../lib/catalog";
 import NotFoundPage from "./not-found";
 
@@ -47,7 +48,23 @@ clientLoader.hydrate = true;
 export function meta({ loaderData }: { loaderData?: { product: Product | null } }) {
   const product = loaderData?.product;
   if (!product) return [{ title: "Page not found | VYTAE" }];
-  return [{ title: `${product.name} | VYTAE` }, { name: "description", content: product.sub }];
+  const path = `/products/${product.handle}`;
+  return seoMeta({
+    title: `${product.name} | VYTAE`,
+    description: product.sub,
+    path,
+    image: product.images[0],
+    type: "product",
+    jsonLd: [
+      productLd(product, path),
+      breadcrumbLd([
+        { name: "Home", path: "/" },
+        { name: "Shop", path: "/shop" },
+        { name: product.name, path },
+      ]),
+      ...(product.faqs.length > 0 ? [faqLd(product.faqs)] : []),
+    ],
+  });
 }
 
 export default function ProductPage() {

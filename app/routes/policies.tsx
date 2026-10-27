@@ -3,6 +3,7 @@ import { SiteShell } from "../components/layout/SiteShell";
 import { COMPANY, POLICIES } from "../content/policies";
 import { loadPolicy, type PolicyView } from "../lib/catalog";
 import { Reveal } from "../lib/motion";
+import { seoMeta } from "../lib/seo";
 import NotFoundPage from "./not-found";
 
 async function loadPolicyRoute(doc: string | undefined) {
@@ -29,9 +30,14 @@ export async function clientLoader({
 }
 clientLoader.hydrate = true;
 
-export function meta({ loaderData }: { loaderData?: { policy: PolicyView | null } }) {
+export function meta({ loaderData }: { loaderData?: { doc: string | null; policy: PolicyView | null } }) {
   const policy = loaderData?.policy;
-  return [{ title: policy ? `${policy.title} | VYTAE` : "Page not found | VYTAE" }];
+  if (!policy || !loaderData?.doc) return [{ title: "Page not found | VYTAE" }];
+  return seoMeta({
+    title: `${policy.title} | VYTAE`,
+    description: `Read VYTAE’s ${policy.title.toLowerCase()}.`,
+    path: `/policies/${loaderData.doc}`,
+  });
 }
 
 // The policy body is HTML from Shopify. Each section heading starts a bordered block, as in the design.

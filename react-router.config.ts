@@ -1,3 +1,5 @@
+import { writeFile } from "node:fs/promises";
+import { join } from "node:path";
 import type { Config } from "@react-router/dev/config";
 import { loadEnv } from "vite";
 import { PRODUCTS } from "./app/content/products";
@@ -9,6 +11,13 @@ const env: Record<string, string | undefined> = {
   ...loadEnv(process.env.NODE_ENV ?? "production", process.cwd(), ""),
   ...process.env,
 };
+
+// Netlify sets URL during builds, so the sitemap works there before the client's own domain is set.
+const SITE_URL = (env.VITE_SITE_URL || env.URL || "").trim().replace(/\/+$/, "");
+
+// Pages that are not in the sitemap: the bag and checkout, the account, and the confirmation page.
+const STATIC_PAGES = ["/", "/shop", "/science", "/about", "/contact", "/batch"];
+const PRIVATE_PATHS = ["/bag", "/account", "/admin"];
 
 async function shopifyHandles(): Promise<{ products: string[]; articles: string[] } | null> {
   const domain = env.VITE_SHOPIFY_DOMAIN?.trim();
@@ -36,19 +45,62 @@ async function shopifyHandles(): Promise<{ products: string[]; articles: string[
   };
 }
 
+// The product, article and policy pages that are prerendered. Built once per build, then shared by the prerender and
+// the sitemap, so the two cannot disagree.
+let dynamicPaths: Promise<{ products: string[]; articles: string[]; policies: string[] }> | null = null;
+
+function pagesToRender(): Promise<{ products: string[]; articles: string[]; policies: string[] }> {
+  dynamicPaths ??= (async () => {
+    const live = await shopifyHandles();
+    return {
+      products: live?.products ?? PRODUCTS.map((p) => p.handle),
+      articles: live?.articles ?? [FEATURED, ...POSTS].map((p) => p.slug),
+      policies: ["privacy", "refund", "terms"],
+    };
+  })();
+  return dynamicPaths;
+}
+
+async function writeSearchFiles(): Promise<void> {
+  const out = join(process.cwd(), "build", "client");
+  const pages = await pagesToRender();
+
+  const sitemap = SITE_URL
+    ? [
+        ...STATIC_PAGES,
+        ...pages.products.map((handle) => `/products/${handle}`),
+        ...pages.articles.map((slug) => `/science/${slug}`),
+        ...pages.policies.map((doc) => `/policies/${doc}`),
+      ]
+    : [];
+
+  const robots = [
+    "User-agent: *",
+    "Allow: /",
+    ...PRIVATE_PATHS.map((path) => `Disallow: ${path}`),
+    ...(SITE_URL ? [`Sitemap: ${SITE_URL}/sitemap.xml`] : []),
+    "",
+  ].join("\n");
+  await writeFile(join(out, "robots.txt"), robots);
+
+  if (!SITE_URL) {
+    console.warn("VITE_SITE_URL is not set, so sitemap.xml was not written.");
+    return;
+  }
+  const entries = sitemap.map((path) => `  <url><loc>${SITE_URL}${path}</loc></url>`).join("\n");
+  await writeFile(join(out, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</urlset>\n`);
+}
+
 export default {
   ssr: false,
   prerender: async ({ getStaticPaths }) => {
-    const live = await shopifyHandles();
-    const products = live?.products ?? PRODUCTS.map((p) => p.handle);
-    const articles = live?.articles ?? [FEATURED, ...POSTS].map((p) => p.slug);
+    const pages = await pagesToRender();
     return [
       ...getStaticPaths(),
-      ...products.map((handle) => `/products/${handle}`),
-      ...articles.map((slug) => `/science/${slug}`),
-      "/policies/privacy",
-      "/policies/refund",
-      "/policies/terms",
+      ...pages.products.map((handle) => `/products/${handle}`),
+      ...pages.articles.map((slug) => `/science/${slug}`),
+      ...pages.policies.map((doc) => `/policies/${doc}`),
     ];
   },
+  buildEnd: writeSearchFiles,
 } satisfies Config;

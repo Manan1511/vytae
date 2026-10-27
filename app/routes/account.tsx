@@ -1,10 +1,16 @@
 import { useState } from "react";
 import { SiteShell } from "../components/layout/SiteShell";
+import { seoMeta } from "../lib/seo";
 import { Eyebrow } from "../components/ui/Eyebrow";
 import { Reveal } from "../lib/motion";
 
 export function meta() {
-  return [{ title: "Account | VYTAE" }, { name: "robots", content: "noindex" }];
+  return seoMeta({
+    title: "Account | VYTAE",
+    description: "Sign in to your VYTAE account.",
+    path: "/account",
+    noindex: true,
+  });
 }
 
 const INPUT = "rounded-[14px] border border-line bg-mist px-3.5 py-3 text-[15px] text-ink outline-none";
