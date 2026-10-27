@@ -201,7 +201,7 @@ export default function BagPage() {
                       current ? "bg-ink text-white" : done ? "bg-frost text-ink" : "text-ink"
                     }`}
                   >
-                    <span className="opacity-70">0{i + 1}</span>
+                    <span className="opacity-80">0{i + 1}</span>
                     {label}
                   </span>
                 );

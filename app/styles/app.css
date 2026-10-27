@@ -36,7 +36,7 @@
     color: var(--color-ink-hover);
   }
   input::placeholder {
-    color: #8a9bb3;
+    color: var(--color-ink-muted);
   }
 }
 
