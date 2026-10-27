@@ -13,7 +13,7 @@ import {
   sectionNumbers,
 } from "../components/product/ProductSections";
 import type { Product } from "../content/products";
-import { addToBag } from "../lib/bag";
+import { useSavedCartStore } from "../lib/cart";
 import { loadCatalog } from "../lib/catalog";
 import NotFoundPage from "./not-found";
 
@@ -59,8 +59,9 @@ export default function ProductPage() {
 function ProductView({ product, catalog }: { product: Product; catalog: Product[] }) {
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
+  const cartStore = useSavedCartStore();
   const addItem = () => {
-    addToBag(product.handle, qty);
+    void cartStore.add(product.handle, qty);
     setAdded(true);
   };
   const n = sectionNumbers(product);

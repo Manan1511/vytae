@@ -1,9 +1,8 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
-import { Link, useSearchParams } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { SiteShell } from "../components/layout/SiteShell";
 import { inr } from "../content/products";
-import { useBag, writeBag, type Bag } from "../lib/bag";
-import { useCatalog } from "../lib/catalog";
+import { parseBuyLine, useBuyNowStore, useCartStore, useSavedCartStore } from "../lib/cart";
 
 export function meta() {
   return [{ title: "Bag | VYTAE" }, { name: "robots", content: "noindex" }];
@@ -29,48 +28,73 @@ const INPUT = "rounded-[14px] border border-line bg-mist px-3.5 py-3 text-[15px]
 const PRIMARY =
   "cursor-pointer rounded-full border-0 bg-[linear-gradient(180deg,#24497a_0%,#26497a_100%)] px-[26px] py-3.5 text-[15px] font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_12px_24px_-14px_rgba(30,62,106,0.7)] hover:bg-ink-hover";
 
+// The bag shows the saved cart. A buy now link (?buy=handle:qty) opens checkout with its own cart and leaves the saved one alone.
 // Checkout works up to the payment step. Placing an order is wired in the checkout phase, so the pay button stays off.
 export default function BagPage() {
-  const bag = useBag();
   const [searchParams] = useSearchParams();
-  const [step, setStep] = useState<Step>(() => (searchParams.get("checkout") ? "details" : "bag"));
-  const [details, setDetails] = useState<Details>(EMPTY_DETAILS);
+  const navigate = useNavigate();
+  const buy = parseBuyLine(searchParams.get("buy"));
+  const savedStore = useSavedCartStore();
+  const buyNowStore = useBuyNowStore(buy);
+  const store = buyNowStore ?? savedStore;
+  const { cart, error } = useCartStore(store);
 
-  const catalog = useCatalog();
-  if (catalog === null) {
+  const [step, setStep] = useState<Step>(() => (buy || searchParams.get("step") === "details" ? "details" : "bag"));
+  const [details, setDetails] = useState<Details>(EMPTY_DETAILS);
+  const [code, setCode] = useState("");
+  const [codeError, setCodeError] = useState<string | null>(null);
+
+  if (cart === null) {
     return (
       <SiteShell variant="solid">
-        <section className="mx-auto max-w-[1200px] px-[clamp(20px,3vw,40px)] pt-[clamp(36px,4vw,56px)] text-ink-soft">Loading your bag…</section>
+        <section className="mx-auto max-w-[1200px] px-[clamp(20px,3vw,40px)] pt-[clamp(36px,4vw,56px)] pb-[clamp(80px,10vw,120px)]">
+          {error ? (
+            <p role="alert" className="m-0 text-base text-ink-body">
+              {error}
+            </p>
+          ) : (
+            <p className="m-0 text-base text-ink-soft">Loading your bag…</p>
+          )}
+        </section>
       </SiteShell>
     );
   }
-  const byHandle = new Map(catalog.map((p) => [p.handle, p]));
-  const lines = Object.entries(bag).flatMap(([key, qty]) => {
-    const product = byHandle.get(key);
-    return product && qty > 0 ? [{ key, qty, product }] : [];
-  });
-  const subtotal = lines.reduce((sum, l) => sum + l.product.price * l.qty, 0);
-  const shipping = subtotal === 0 || subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING_FEE;
-  const total = subtotal + shipping;
-  const showUpsell = !bag["sleep-ritual"] && (bag["night-reset"] ?? 0) > 0 && (bag["rest-well"] ?? 0) > 0;
+
+  const lines = cart.lines;
+  const byHandle = (handle: string) => lines.find((line) => line.handle === handle);
+  const night = byHandle("night-reset");
+  const rest = byHandle("rest-well");
+  const showUpsell = !byHandle("sleep-ritual") && night !== undefined && rest !== undefined;
+
+  const discount = cart.discount;
+  const subtotal = cart.subtotal;
+  const discounted = cart.total;
+  const shipping = discounted === 0 || discounted >= FREE_SHIPPING_FROM ? 0 : SHIPPING_FEE;
+  const total = discounted + shipping;
   const title = step === "bag" ? "Your bag" : "Checkout";
 
-  const setQty = (key: string, qty: number) => writeBag({ ...bag, [key]: qty });
-
-  const remove = (key: string) => {
-    const next: Bag = { ...bag };
-    delete next[key];
-    writeBag(next);
+  // Swaps matching Night Onset and Rest Well units for The Sleep Ritual. Any units left over stay in the bag.
+  const swapToRitual = async () => {
+    if (!night || !rest) return;
+    const pairs = Math.min(night.quantity, rest.quantity);
+    await store.setQuantity(night.id, night.quantity - pairs);
+    await store.setQuantity(rest.id, rest.quantity - pairs);
+    await store.add("sleep-ritual", pairs);
   };
 
-  // Swaps one Night Onset and one Rest Well for The Sleep Ritual.
-  const addRitual = () => {
-    const next: Bag = { ...bag };
-    const n = Math.min(next["night-reset"] || 1, next["rest-well"] || 1);
-    delete next["night-reset"];
-    delete next["rest-well"];
-    next["sleep-ritual"] = (next["sleep-ritual"] || 0) + n;
-    writeBag(next);
+  const applyCode = async (event: FormEvent) => {
+    event.preventDefault();
+    const value = code.trim();
+    if (!value) return;
+    const message = await store.applyDiscount(value);
+    setCodeError(message);
+    if (!message) setCode("");
+  };
+
+  // Leaving a buy now checkout returns to the saved cart.
+  const backToBag = () => {
+    setStep("bag");
+    if (buy) navigate("/bag");
   };
 
   const field = (key: keyof Details) => (e: ChangeEvent<HTMLInputElement>) =>
@@ -111,6 +135,12 @@ export default function BagPage() {
           )}
         </div>
 
+        {error && (
+          <p role="alert" className="mb-6 rounded-[14px] bg-frost px-4 py-3 text-sm text-ink">
+            {error}
+          </p>
+        )}
+
         {lines.length === 0 ? (
           <div className="flex flex-col items-center gap-[18px] rounded-[28px] border border-line bg-white px-6 py-[clamp(56px,8vw,96px)] text-center">
             <span className="text-[28px] tracking-[-0.02em]">Your bag is empty.</span>
@@ -121,7 +151,7 @@ export default function BagPage() {
               </Link>
               <button
                 type="button"
-                onClick={addRitual}
+                onClick={() => void store.add("sleep-ritual", 1)}
                 className="cursor-pointer rounded-full border border-ink bg-transparent px-[26px] py-3.5 text-[15px] font-semibold text-ink hover:bg-frost"
               >
                 Add The Sleep Ritual
@@ -135,31 +165,31 @@ export default function BagPage() {
                 <>
                   {lines.map((l) => (
                     <div
-                      key={l.key}
+                      key={l.id}
                       className="grid grid-cols-[96px_minmax(0,1fr)_auto] items-center gap-[18px] rounded-[22px] border border-line bg-white p-3.5 shadow-[0_24px_48px_-36px_rgba(27,54,93,0.3)]"
                     >
-                      <Link to={`/products/${l.key}`} className="relative block aspect-square overflow-hidden rounded-2xl bg-frost">
-                        <img src={l.product.images[0]} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                      <Link to={`/products/${l.handle}`} className="relative block aspect-square overflow-hidden rounded-2xl bg-frost">
+                        <img src={l.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
                       </Link>
                       <div className="flex min-w-0 flex-col gap-1.5">
-                        <Link to={`/products/${l.key}`} className="text-xl tracking-[-0.01em] text-ink">
-                          {l.product.name}
+                        <Link to={`/products/${l.handle}`} className="text-xl tracking-[-0.01em] text-ink">
+                          {l.name}
                         </Link>
-                        <span className="text-[13px] text-ink-muted">{PACK[l.key]}</span>
+                        <span className="text-[13px] text-ink-muted">{PACK[l.handle]}</span>
                         <div className="mt-1.5 flex items-center gap-3.5">
                           <div className="flex items-center rounded-full border border-line bg-white">
                             <button
                               type="button"
-                              onClick={() => setQty(l.key, Math.max(1, l.qty - 1))}
+                              onClick={() => void store.setQuantity(l.id, Math.max(1, l.quantity - 1))}
                               aria-label="Decrease"
                               className="h-9 w-9 cursor-pointer border-0 bg-transparent text-base text-ink"
                             >
                               −
                             </button>
-                            <span className="min-w-4 text-center text-sm font-semibold">{l.qty}</span>
+                            <span className="min-w-4 text-center text-sm font-semibold">{l.quantity}</span>
                             <button
                               type="button"
-                              onClick={() => setQty(l.key, l.qty + 1)}
+                              onClick={() => void store.setQuantity(l.id, l.quantity + 1)}
                               aria-label="Increase"
                               className="h-9 w-9 cursor-pointer border-0 bg-transparent text-base text-ink"
                             >
@@ -168,22 +198,20 @@ export default function BagPage() {
                           </div>
                           <button
                             type="button"
-                            onClick={() => remove(l.key)}
+                            onClick={() => void store.remove(l.id)}
                             className="cursor-pointer border-0 bg-transparent p-0 text-[13px] text-ink-muted underline underline-offset-[3px]"
                           >
                             Remove
                           </button>
                         </div>
                       </div>
-                      <span className="self-start pt-1 text-base font-semibold tabular-nums">
-                        {inr(l.product.price * l.qty)}
-                      </span>
+                      <span className="self-start pt-1 text-base font-semibold tabular-nums">{inr(l.unitPrice * l.quantity)}</span>
                     </div>
                   ))}
                   {showUpsell && (
                     <button
                       type="button"
-                      onClick={addRitual}
+                      onClick={() => void swapToRitual()}
                       className="flex cursor-pointer items-center justify-between gap-3 rounded-[18px] border border-dashed border-line bg-transparent px-5 py-4 text-left text-sm text-ink"
                     >
                       <span>
@@ -244,7 +272,7 @@ export default function BagPage() {
                     </label>
                   </div>
                   <div className="flex items-center justify-between gap-3 pt-1.5">
-                    <button type="button" onClick={() => setStep("bag")} className="cursor-pointer border-0 bg-transparent p-0 text-sm font-semibold text-ink">
+                    <button type="button" onClick={backToBag} className="cursor-pointer border-0 bg-transparent p-0 text-sm font-semibold text-ink">
                       ← Back to bag
                     </button>
                     <button type="submit" className={PRIMARY}>
@@ -285,11 +313,11 @@ export default function BagPage() {
               {step !== "bag" && (
                 <div className="flex flex-col gap-2 border-b border-[rgba(27,54,93,0.12)] pb-3">
                   {lines.map((l) => (
-                    <div key={l.key} className="flex justify-between gap-3 text-sm">
+                    <div key={l.id} className="flex justify-between gap-3 text-sm">
                       <span>
-                        {l.product.name} × {l.qty}
+                        {l.name} × {l.quantity}
                       </span>
-                      <span className="tabular-nums">{inr(l.product.price * l.qty)}</span>
+                      <span className="tabular-nums">{inr(l.unitPrice * l.quantity)}</span>
                     </div>
                   ))}
                 </div>
@@ -298,6 +326,12 @@ export default function BagPage() {
                 <span className="text-ink-body">Subtotal</span>
                 <span className="tabular-nums">{inr(subtotal)}</span>
               </div>
+              {discount > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-ink-body">Discount</span>
+                  <span className="tabular-nums">−{inr(discount)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-sm">
                 <span className="text-ink-body">Delivery</span>
                 <span>{shipping ? inr(shipping) : "Free"}</span>
@@ -309,6 +343,44 @@ export default function BagPage() {
               <span className="text-xs text-ink-muted">
                 {shipping ? "Free delivery on orders over ₹999." : "You’ve unlocked free delivery."}
               </span>
+
+              {cart.discountCode ? (
+                <div className="flex items-center justify-between gap-3 rounded-[14px] bg-frost px-3.5 py-2.5 text-sm">
+                  <span>
+                    Code <span className="font-semibold">{cart.discountCode}</span> applied
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => void store.removeDiscount()}
+                    className="cursor-pointer border-0 bg-transparent p-0 text-[13px] font-semibold text-ink underline underline-offset-[3px]"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={applyCode} className="flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <input
+                      value={code}
+                      onChange={(e) => {
+                        setCode(e.target.value);
+                        setCodeError(null);
+                      }}
+                      placeholder="Discount code"
+                      aria-label="Discount code"
+                      className={`${INPUT} min-w-0 flex-1`}
+                    />
+                    <button
+                      type="submit"
+                      className="cursor-pointer rounded-full border border-ink bg-white px-4 text-sm font-semibold whitespace-nowrap text-ink hover:bg-frost"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                  {codeError && <span className="text-[13px] font-semibold text-ink">{codeError}</span>}
+                </form>
+              )}
+
               {step === "bag" && (
                 <button type="button" onClick={() => setStep("details")} className={PRIMARY}>
                   Checkout

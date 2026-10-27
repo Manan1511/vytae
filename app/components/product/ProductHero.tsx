@@ -1,7 +1,7 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { Link, useNavigate } from "react-router";
 import { inr, type Product } from "../../content/products";
-import { addToBag } from "../../lib/bag";
+import { buyNowHref } from "../../lib/cart";
 import { Stroke } from "../ui/icons";
 
 type HeroProps = {
@@ -19,10 +19,7 @@ export function ProductHero({ product, qty, setQty, added, addItem }: HeroProps)
   const badge = product.step.replace(/^Step \d+ · /, "");
 
   const back = () => (window.history.length > 1 ? navigate(-1) : navigate("/shop"));
-  const buyNow = () => {
-    addToBag(product.handle, qty);
-    navigate("/bag?checkout=1");
-  };
+  const buyNow = () => navigate(buyNowHref(product.handle, qty));
 
   return (
     <section

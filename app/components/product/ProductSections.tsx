@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link } from "react-router";
 import { PASSPORT_CHECKS, inr, type Product } from "../../content/products";
-import { addToBag } from "../../lib/bag";
+import { useSavedCartStore } from "../../lib/cart";
 import { Reveal } from "../../lib/motion";
 import { whatsappUrl } from "../../lib/whatsapp";
 import { BRAND_PATHS } from "../ui/brand";
@@ -222,6 +222,7 @@ const PAIR_ROLE: Record<string, string> = {
 };
 
 function PairCard({ item, current }: { item: Product; current: boolean }) {
+  const cartStore = useSavedCartStore();
   const [added, setAdded] = useState(false);
   const href = `/products/${item.handle}`;
 
@@ -257,7 +258,7 @@ function PairCard({ item, current }: { item: Product; current: boolean }) {
               <button
                 type="button"
                 onClick={() => {
-                  addToBag(item.handle);
+                  void cartStore.add(item.handle, 1);
                   setAdded(true);
                 }}
                 className="cursor-pointer rounded-full border-0 bg-ink px-[22px] py-[13px] text-sm font-semibold whitespace-nowrap text-white hover:bg-ink-hover"
@@ -276,6 +277,7 @@ function PairCard({ item, current }: { item: Product; current: boolean }) {
 }
 
 function RitualSetCard({ set, singles }: { set: Product; singles: number }) {
+  const cartStore = useSavedCartStore();
   const [added, setAdded] = useState(false);
 
   return (
@@ -309,7 +311,7 @@ function RitualSetCard({ set, singles }: { set: Product; singles: number }) {
           <button
             type="button"
             onClick={() => {
-              addToBag(set.handle);
+              void cartStore.add(set.handle, 1);
               setAdded(true);
             }}
             className="cursor-pointer rounded-full bg-white px-[22px] py-[13px] text-sm font-semibold whitespace-nowrap text-ink hover:bg-frost"

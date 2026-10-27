@@ -1,10 +1,11 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router";
 import { inr, type Product } from "../../content/products";
-import { addToBag } from "../../lib/bag";
+import { useSavedCartStore } from "../../lib/cart";
 import { Reveal } from "../../lib/motion";
 
 export function ShopCard({ product }: { product: Product }) {
+  const cartStore = useSavedCartStore();
   const [added, setAdded] = useState(false);
   const href = `/products/${product.handle}`;
 
@@ -32,7 +33,7 @@ export function ShopCard({ product }: { product: Product }) {
           <button
             type="button"
             onClick={() => {
-              addToBag(product.handle);
+              void cartStore.add(product.handle, 1);
               setAdded(true);
             }}
             className="cursor-pointer rounded-full border border-ink bg-white px-4 py-[13px] text-sm font-semibold whitespace-nowrap text-ink hover:bg-frost"

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { useBagCount } from "../../lib/bag";
+import { useCartCount } from "../../lib/cart";
 import { Stroke } from "../ui/icons";
 
 const NAV = [
@@ -25,7 +25,7 @@ function useScrolled(threshold: number) {
 export function SiteHeader({ variant = "hero", active }: { variant?: "hero" | "solid"; active?: string }) {
   const scrolled = useScrolled(40);
   const solid = variant === "solid" || scrolled;
-  const bagCount = useBagCount();
+  const bagCount = useCartCount();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { GOALS, type GoalKey } from "../../content/home";
 import type { Product } from "../../lib/catalog";
-import { addToBag } from "../../lib/bag";
+import { useSavedCartStore } from "../../lib/cart";
 import { Reveal } from "../../lib/motion";
 import { Eyebrow } from "../ui/Eyebrow";
 import { Stroke } from "../ui/icons";
@@ -19,6 +19,7 @@ type CardProps = {
 };
 
 function ProductCard({ productKey, href, image, moment, title, tag, desc, specs }: CardProps) {
+  const cartStore = useSavedCartStore();
   return (
     <Reveal className="group flex flex-col overflow-hidden rounded-3xl border border-line bg-white shadow-[0_1px_0_rgba(27,54,93,0.04),0_24px_48px_-32px_rgba(27,54,93,0.28)] transition-[transform,box-shadow] duration-[600ms] ease-soft hover:-translate-y-1 hover:shadow-[0_1px_0_rgba(27,54,93,0.04),0_36px_60px_-32px_rgba(27,54,93,0.3)]">
       <Link to={href} className="relative block aspect-[4/3] overflow-hidden bg-frost">
@@ -51,7 +52,7 @@ function ProductCard({ productKey, href, image, moment, title, tag, desc, specs 
         <div className="mt-auto flex flex-wrap items-center gap-5 pt-1">
           <button
             type="button"
-            onClick={() => addToBag(productKey)}
+            onClick={() => void cartStore.add(productKey, 1)}
             className="inline-flex cursor-pointer items-center rounded-full border-0 bg-ink px-6 py-[13px] text-sm font-semibold whitespace-nowrap text-white transition-colors hover:bg-ink-hover"
           >
             Add to bag
