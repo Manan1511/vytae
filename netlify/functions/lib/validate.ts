@@ -1,44 +1,5 @@
+import { INDIAN_STATES } from "../../../app/content/states.ts";
 import { HttpError } from "./http.ts";
-
-// Indian states and union territories, by the ISO 3166-2:IN code that Shopify stores as the province code.
-export const INDIAN_STATES: Record<string, string> = {
-  AN: "Andaman and Nicobar Islands",
-  AP: "Andhra Pradesh",
-  AR: "Arunachal Pradesh",
-  AS: "Assam",
-  BR: "Bihar",
-  CH: "Chandigarh",
-  CT: "Chhattisgarh",
-  DN: "Dadra and Nagar Haveli and Daman and Diu",
-  DL: "Delhi",
-  GA: "Goa",
-  GJ: "Gujarat",
-  HR: "Haryana",
-  HP: "Himachal Pradesh",
-  JK: "Jammu and Kashmir",
-  JH: "Jharkhand",
-  KA: "Karnataka",
-  KL: "Kerala",
-  LA: "Ladakh",
-  LD: "Lakshadweep",
-  MP: "Madhya Pradesh",
-  MH: "Maharashtra",
-  MN: "Manipur",
-  ML: "Meghalaya",
-  MZ: "Mizoram",
-  NL: "Nagaland",
-  OR: "Odisha",
-  PY: "Puducherry",
-  PB: "Punjab",
-  RJ: "Rajasthan",
-  SK: "Sikkim",
-  TN: "Tamil Nadu",
-  TG: "Telangana",
-  TR: "Tripura",
-  UP: "Uttar Pradesh",
-  UT: "Uttarakhand",
-  WB: "West Bengal",
-};
 
 export const MAX_LINES = 10;
 export const MAX_QUANTITY = 10;

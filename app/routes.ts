@@ -5,6 +5,7 @@ export default [
   route("shop", "routes/shop.tsx"),
   route("products/:handle", "routes/product.tsx"),
   route("bag", "routes/bag.tsx"),
+  route("bag/confirmed", "routes/bag-confirmed.tsx"),
   route("science", "routes/science.tsx"),
   route("science/:slug", "routes/article.tsx"),
   route("about", "routes/about.tsx"),

@@ -1,8 +1,10 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { SiteShell } from "../components/layout/SiteShell";
+import { INDIAN_STATES } from "../content/states";
 import { inr } from "../content/products";
 import { parseBuyLine, useBuyNowStore, useCartStore, useSavedCartStore } from "../lib/cart";
+import { LAST_ORDER_KEY, confirmPayment, openCheckout, startPayment, type ConfirmedPayment } from "../lib/payment";
 
 export function meta() {
   return [{ title: "Bag | VYTAE" }, { name: "robots", content: "noindex" }];
@@ -29,7 +31,6 @@ const PRIMARY =
   "cursor-pointer rounded-full border-0 bg-[linear-gradient(180deg,#24497a_0%,#26497a_100%)] px-[26px] py-3.5 text-[15px] font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_12px_24px_-14px_rgba(30,62,106,0.7)] hover:bg-ink-hover";
 
 // The bag shows the saved cart. A buy now link (?buy=handle:qty) opens checkout with its own cart and leaves the saved one alone.
-// Checkout works up to the payment step. Placing an order is wired in the checkout phase, so the pay button stays off.
 export default function BagPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -43,6 +44,8 @@ export default function BagPage() {
   const [details, setDetails] = useState<Details>(EMPTY_DETAILS);
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState<string | null>(null);
+  const [paying, setPaying] = useState(false);
+  const [payError, setPayError] = useState<string | null>(null);
 
   if (cart === null) {
     return (
@@ -72,6 +75,8 @@ export default function BagPage() {
   const shipping = discounted === 0 || discounted >= FREE_SHIPPING_FROM ? 0 : SHIPPING_FEE;
   const total = discounted + shipping;
   const title = step === "bag" ? "Your bag" : "Checkout";
+  // Payment needs Shopify variants. The offline bag has none, so Pay stays off there.
+  const canPay = lines.length > 0 && lines.every((line) => line.variantId !== null);
 
   // Swaps matching Night Onset and Rest Well units for The Sleep Ritual. Any units left over stay in the bag.
   const swapToRitual = async () => {
@@ -97,13 +102,71 @@ export default function BagPage() {
     if (buy) navigate("/bag");
   };
 
-  const field = (key: keyof Details) => (e: ChangeEvent<HTMLInputElement>) =>
+  const field = (key: keyof Details) => (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
     setDetails((d) => ({ ...d, [key]: e.target.value }));
 
   const onDetails = (e: FormEvent) => {
     e.preventDefault();
     setStep("pay");
     window.scrollTo(0, 0);
+  };
+
+  // Creates the Razorpay order, takes the payment in Razorpay's modal, confirms it, then shows the confirmation page.
+  const pay = async () => {
+    if (!cart || paying || !canPay) return;
+    setPaying(true);
+    setPayError(null);
+    const contact = { name: details.name.trim(), phone: details.phone.trim(), email: details.email.trim() };
+    try {
+      const started = await startPayment({
+        lines: lines.flatMap((line) => (line.variantId ? [{ variantId: line.variantId, quantity: line.quantity }] : [])),
+        contact,
+        address: { line: details.addr.trim(), city: details.city.trim(), state: details.state, pin: details.pin.trim() },
+        discountCode: cart.discountCode,
+      });
+      const result = await openCheckout({
+        keyId: started.keyId,
+        orderId: started.razorpayOrderId,
+        amountPaise: started.amountPaise,
+        contact,
+      });
+      if (result.kind !== "paid") {
+        setPayError(result.kind === "failed" ? result.message : "Payment was cancelled. Your bag is unchanged.");
+        return;
+      }
+
+      // The money has moved, so the saved cart is spent. A buy now cart was never saved.
+      if (!buy) await savedStore.clear();
+      let outcome: ConfirmedPayment;
+      try {
+        outcome = await confirmPayment(result.response);
+      } catch {
+        outcome = { status: "pending", message: "Payment received. We’re confirming your order." };
+      }
+      try {
+        sessionStorage.setItem(
+          LAST_ORDER_KEY,
+          JSON.stringify({
+            status: outcome.status,
+            orderName: outcome.status === "confirmed" ? outcome.orderName : null,
+            message: outcome.status === "pending" ? outcome.message : null,
+            paymentId: result.response.razorpay_payment_id,
+            email: contact.email,
+            amountPaise: started.amountPaise,
+            discountPaise: started.breakdown.discountPaise,
+            shippingPaise: started.breakdown.shippingPaise,
+            lines: lines.map((line) => ({ name: line.name, quantity: line.quantity, unitPrice: line.unitPrice })),
+          }),
+        );
+      } catch {
+        // Storage blocked: the confirmation page still shows, without the order summary.
+      }
+      navigate("/bag/confirmed");
+    } catch (error) {
+      setPayError(error instanceof Error ? error.message : "Something went wrong. Try again.");
+    } finally {
+      setPaying(false);
+    }
   };
 
   return (
@@ -264,7 +327,16 @@ export default function BagPage() {
                     </label>
                     <label className="flex flex-col gap-1.5 text-[13px] font-semibold">
                       State
-                      <input required value={details.state} onChange={field("state")} className={INPUT} />
+                      <select required value={details.state} onChange={field("state")} className={INPUT}>
+                        <option value="" disabled>
+                          Choose state
+                        </option>
+                        {Object.entries(INDIAN_STATES).map(([code, name]) => (
+                          <option key={code} value={code}>
+                            {name}
+                          </option>
+                        ))}
+                      </select>
                     </label>
                     <label className="flex flex-col gap-1.5 text-[13px] font-semibold">
                       PIN code
@@ -291,17 +363,27 @@ export default function BagPage() {
                   <div className="flex items-center justify-between gap-4 rounded-[18px] border-[1.5px] border-ink bg-[#f5f8fc] px-5 py-[18px]">
                     <span className="flex flex-col gap-1">
                       <span className="text-base font-semibold">Pay online</span>
-                      <span className="text-sm text-ink-soft">UPI, cards, netbanking and wallets — secured by our payment partner.</span>
+                      <span className="text-sm text-ink-soft">UPI, cards, netbanking and wallets — secured by Razorpay.</span>
                     </span>
                     <span className="h-5 w-5 flex-none rounded-full border-[1.5px] border-ink bg-ink shadow-[inset_0_0_0_4px_#ffffff]" />
                   </div>
-                  <p className="m-0 text-sm text-ink-soft">Online payment opens once the payment setup is complete.</p>
+                  {!canPay && <p className="m-0 text-sm text-ink-soft">Online payment opens once the store is connected.</p>}
+                  {payError && (
+                    <p role="alert" className="m-0 rounded-[14px] bg-frost px-4 py-3 text-sm text-ink">
+                      {payError}
+                    </p>
+                  )}
                   <div className="flex items-center justify-between gap-3 pt-1.5">
                     <button type="button" onClick={() => setStep("details")} className="cursor-pointer border-0 bg-transparent p-0 text-sm font-semibold text-ink">
                       ← Edit details
                     </button>
-                    <button type="button" disabled className={`${PRIMARY} cursor-not-allowed opacity-50`}>
-                      Pay {inr(total)}
+                    <button
+                      type="button"
+                      disabled={!canPay || paying}
+                      onClick={() => void pay()}
+                      className={`${PRIMARY} ${!canPay || paying ? "opacity-50" : ""}`}
+                    >
+                      {paying ? "Opening payment…" : `Pay ${inr(total)}`}
                     </button>
                   </div>
                 </div>

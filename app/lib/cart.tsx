@@ -7,6 +7,7 @@ import { storefrontEnabled, storefrontQuery } from "./shopify/storefront";
 
 export type CartLine = {
   id: string; // Shopify line ID, or the product handle in the local cart
+  variantId: string | null; // null in the local cart, which cannot take payment
   handle: string;
   name: string;
   image: string;
@@ -36,6 +37,8 @@ export type CartStore = {
   // Resolves to the message to show when the code is not accepted, or null when it is applied.
   applyDiscount: (code: string) => Promise<string | null>;
   removeDiscount: () => Promise<void>;
+  // Empties the saved cart after a paid order. Buy-now carts are never saved, so they never need it.
+  clear: () => Promise<void>;
 };
 
 export type BuyLine = { handle: string; quantity: number };
@@ -90,7 +93,8 @@ type Operation =
   | { kind: "replace"; handle: string; quantity: number }
   | { kind: "setQuantity"; lineId: string; quantity: number }
   | { kind: "remove"; lineId: string }
-  | { kind: "discount"; code: string | null };
+  | { kind: "discount"; code: string | null }
+  | { kind: "clear" };
 
 type Outcome = { cart: Cart; error?: string };
 
@@ -157,6 +161,9 @@ function createCartStore(backend: CartBackend): CartStore {
     async removeDiscount() {
       await run(() => backend.apply({ kind: "discount", code: null }), false);
     },
+    async clear() {
+      await run(() => backend.apply({ kind: "clear" }));
+    },
   };
 }
 
@@ -173,6 +180,7 @@ const CART_FIELDS = `
       quantity
       merchandise {
         ... on ProductVariant {
+          id
           price { amount }
           product { handle title featuredImage { url } }
         }
@@ -211,6 +219,7 @@ type StorefrontCart = {
       id: string;
       quantity: number;
       merchandise: {
+        id: string;
         price: { amount: string };
         product: { handle: string; title: string; featuredImage: { url: string } | null };
       };
@@ -223,6 +232,7 @@ type CartPayload = { cart: StorefrontCart | null; userErrors: { message: string 
 function toCart(cart: StorefrontCart): Cart {
   const lines = cart.lines.nodes.map((line) => ({
     id: line.id,
+    variantId: line.merchandise.id,
     handle: line.merchandise.product.handle,
     name: line.merchandise.product.title,
     image: line.merchandise.product.featuredImage?.url ?? "",
@@ -327,6 +337,10 @@ function storefrontBackend(persist: Persist): CartBackend {
           return { cart: await resolveCart(persist, id, payload) };
         }
 
+        case "clear":
+          persist.set(null);
+          return { cart: EMPTY_CART };
+
         case "discount": {
           const id = persist.get();
           const code = operation.code;
@@ -362,7 +376,7 @@ function localCart(bag: Bag): Cart {
   const lines = Object.entries(bag).flatMap(([handle, quantity]) => {
     const product = PRODUCTS.find((p) => p.handle === handle);
     if (!product || quantity < 1) return [];
-    return [{ id: handle, handle, name: product.name, image: product.images[0] ?? "", unitPrice: product.price, quantity }];
+    return [{ id: handle, variantId: null, handle, name: product.name, image: product.images[0] ?? "", unitPrice: product.price, quantity }];
   });
   const subtotal = lines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
   return {
@@ -381,6 +395,10 @@ function localBackend(persist: Persist): CartBackend {
       return localCart(readBag(persist));
     },
     async apply(operation) {
+      if (operation.kind === "clear") {
+        persist.set("{}");
+        return { cart: localCart({}) };
+      }
       if (operation.kind === "discount") {
         return {
           cart: localCart(readBag(persist)),
