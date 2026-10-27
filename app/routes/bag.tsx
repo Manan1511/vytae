@@ -61,6 +61,7 @@ export default function BagPage() {
     return (
       <SiteShell variant="solid">
         <section className="mx-auto max-w-[1200px] px-[clamp(20px,3vw,40px)] pt-[clamp(36px,4vw,56px)] pb-[clamp(80px,10vw,120px)]">
+          <h1 className="m-0 mb-8 text-[clamp(36px,3.6vw,52px)] leading-[1.04] font-normal tracking-[-0.025em]">Your bag</h1>
           {error ? (
             <p role="alert" className="m-0 text-base text-ink-body">
               {error}
@@ -242,7 +243,7 @@ export default function BagPage() {
                       key={l.id}
                       className="grid grid-cols-[96px_minmax(0,1fr)_auto] items-center gap-[18px] rounded-[22px] border border-line bg-white p-3.5 shadow-[0_24px_48px_-36px_rgba(27,54,93,0.3)]"
                     >
-                      <Link to={`/products/${l.handle}`} className="relative block aspect-square overflow-hidden rounded-2xl bg-frost">
+                      <Link to={`/products/${l.handle}`} tabIndex={-1} aria-hidden="true" className="relative block aspect-square overflow-hidden rounded-2xl bg-frost">
                         <img src={l.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
                       </Link>
                       <div className="flex min-w-0 flex-col gap-1.5">

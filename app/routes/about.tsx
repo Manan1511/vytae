@@ -3,12 +3,14 @@ import { Link } from "react-router";
 import { SiteShell } from "../components/layout/SiteShell";
 import { Eyebrow } from "../components/ui/Eyebrow";
 import { Reveal } from "../lib/motion";
+import { seoMeta } from "../lib/seo";
 
 export function meta() {
-  return [
-    { title: "About | VYTAE" },
-    { name: "description", content: "VYTAE makes considered supplements for everyday rituals, traceable down to the batch." },
-  ];
+  return seoMeta({
+    title: "About | VYTAE",
+    description: "VYTAE makes considered supplements for everyday rituals, traceable down to the batch.",
+    path: "/about",
+  });
 }
 
 // Tones for the three value circles, in the order they light up.
@@ -79,8 +81,8 @@ export default function AboutPage() {
       </section>
 
       <section data-screen-label="Image" className="px-3">
-        <div className="relative mx-auto aspect-[16/7] max-w-[1480px] min-h-[300px] overflow-hidden rounded-[28px] bg-frost">
-          <img src="/assets/life-group.webp" alt="" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="relative mx-auto aspect-[16/7] max-w-[1480px] min-[760px]:min-h-[300px] overflow-hidden rounded-[28px] bg-frost">
+          <img src="/assets/life-group.webp" alt="" data-parallax className="absolute inset-0 h-full w-full object-cover" />
         </div>
       </section>
 
@@ -182,7 +184,7 @@ export default function AboutPage() {
       <section data-screen-label="Process" className="mx-auto max-w-[1320px] px-10 pb-[clamp(80px,10vw,128px)]">
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] items-center gap-[clamp(32px,5vw,72px)]">
           <div className="relative aspect-[4/5] max-h-[620px] overflow-hidden rounded-3xl bg-frost">
-            <img src="/assets/test-tubes.webp" alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+            <img src="/assets/test-tubes.webp" alt="" loading="lazy" data-parallax className="absolute inset-0 h-full w-full object-cover" />
           </div>
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-4">

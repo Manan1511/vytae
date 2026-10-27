@@ -62,7 +62,7 @@ export function SiteHeader({ variant = "hero", active }: { variant?: "hero" | "s
           </span>
         </button>
 
-        <nav className="hidden gap-[26px] text-[13px] font-medium tracking-[0.01em] min-[960px]:flex">
+        <nav aria-label="Main" className="hidden gap-[26px] text-[13px] font-medium tracking-[0.01em] min-[960px]:flex">
           {NAV.map((link) => (
             <Link
               key={link.to}

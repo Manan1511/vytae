@@ -19,7 +19,7 @@ export function Ugc() {
         </a>
       </div>
 
-      <div className="no-scrollbar grid auto-cols-[minmax(220px,1fr)] grid-flow-col snap-x snap-mandatory gap-4 overflow-x-auto">
+      <div role="region" aria-label="Customer videos" tabIndex={0} className="no-scrollbar grid auto-cols-[minmax(220px,1fr)] grid-flow-col snap-x snap-mandatory gap-4 overflow-x-auto">
         {UGC.map((u, i) => (
           <Reveal key={i} className="relative aspect-[9/16] snap-start overflow-hidden rounded-[20px] bg-frost">
             <div

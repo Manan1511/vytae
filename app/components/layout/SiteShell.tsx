@@ -50,9 +50,11 @@ export function SiteShell({ children, variant = "hero", active }: SiteShellProps
       )}
       <AnnouncementBar />
       <SiteHeader variant={variant} active={active} />
-      <main>{children}</main>
+      <main>
+        {children}
+        <WhatsAppFab />
+      </main>
       <SiteFooter />
-      <WhatsAppFab />
     </div>
   );
 }

@@ -127,7 +127,7 @@ export function Reviews({ reviews }: { reviews: Testimonial[] }) {
           ))}
         </div>
 
-        <div className="no-scrollbar -mx-10 grid snap-x snap-mandatory grid-flow-col auto-cols-[82%] gap-4 overflow-x-auto scroll-px-10 px-10 pt-1 pb-6 min-[760px]:hidden">
+        <div role="region" aria-label="Customer reviews" tabIndex={0} className="no-scrollbar -mx-10 grid snap-x snap-mandatory grid-flow-col auto-cols-[82%] gap-4 overflow-x-auto scroll-px-10 px-10 pt-1 pb-6 min-[760px]:hidden">
           {reviews.map((r) => (
             <ReviewCard key={r.name} quote={r.quote} name={r.name} product={r.product} className="snap-start" />
           ))}

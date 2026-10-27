@@ -42,7 +42,7 @@ export function ProductSubnav({
   return (
     <div className="sticky top-14 z-[25] border-b border-line-soft bg-[rgba(246,249,253,0.94)] shadow-[0_1px_0_#dde7f2] backdrop-blur-[12px]">
       <div className="mx-auto flex h-[60px] max-w-[1320px] items-center justify-between gap-5 px-[clamp(20px,3vw,40px)]">
-        <nav className="no-scrollbar flex min-w-0 gap-1 overflow-x-auto">
+        <nav aria-label="Product sections" className="no-scrollbar flex min-w-0 gap-1 overflow-x-auto">
           {tabs.map((tab) => {
             const on = active === tab.id;
             return (

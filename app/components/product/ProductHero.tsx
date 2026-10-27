@@ -37,12 +37,12 @@ export function ProductHero({ product, qty, setQty, added, addItem }: HeroProps)
         Back
       </button>
 
-      <nav className="mb-5 flex gap-2 text-[13px] text-ink-muted">
+      <nav aria-label="Breadcrumb" className="mb-5 flex gap-2 text-[13px] text-ink-muted">
         <Link to="/shop" className="text-ink-muted">
           Shop
         </Link>
         <span>/</span>
-        <span className="text-ink">{product.name}</span>
+        <span aria-current="page" className="text-ink">{product.name}</span>
       </nav>
 
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,340px),1fr))] items-start gap-[clamp(28px,4.5vw,72px)]">

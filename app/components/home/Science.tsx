@@ -41,7 +41,7 @@ export function Science({ articles }: { articles: Post[] }) {
         </Reveal>
       </div>
 
-      <div className="no-scrollbar mt-[clamp(40px,5vw,64px)] grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-x-4 gap-y-10 max-[759px]:-mx-10 max-[759px]:grid-flow-col max-[759px]:auto-cols-[82%] max-[759px]:grid-cols-none max-[759px]:snap-x max-[759px]:snap-mandatory max-[759px]:overflow-x-auto max-[759px]:px-10 max-[759px]:pb-6 max-[759px]:scroll-px-10">
+      <div role="region" aria-label="Articles" tabIndex={0} className="no-scrollbar mt-[clamp(40px,5vw,64px)] grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-x-4 gap-y-10 max-[759px]:-mx-10 max-[759px]:grid-flow-col max-[759px]:auto-cols-[82%] max-[759px]:grid-cols-none max-[759px]:snap-x max-[759px]:snap-mandatory max-[759px]:overflow-x-auto max-[759px]:px-10 max-[759px]:pb-6 max-[759px]:scroll-px-10">
         {articles.map((a) => (
           <Reveal
             key={a.slug}

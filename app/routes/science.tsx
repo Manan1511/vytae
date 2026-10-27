@@ -52,7 +52,7 @@ export default function SciencePage() {
             className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] overflow-hidden rounded-[28px] border border-line bg-cloud shadow-[0_1px_0_rgba(27,54,93,0.04),0_24px_48px_-32px_rgba(27,54,93,0.28)] transition-shadow duration-500 hover:shadow-[0_36px_60px_-32px_rgba(27,54,93,0.3)]"
           >
             <span className="relative block min-h-[clamp(300px,32vw,460px)] overflow-hidden bg-frost">
-              <img src={featured.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              <img src={featured.image} alt="" data-parallax className="absolute inset-0 h-full w-full object-cover" />
             </span>
             <span className="flex flex-col justify-center gap-[18px] p-[clamp(32px,4vw,64px)]">
               <span className="flex gap-2.5 text-xs font-semibold tracking-[0.12em] text-ink-muted uppercase">
@@ -92,6 +92,7 @@ export default function SciencePage() {
           {listed.map((p) => (
             <Reveal
               key={p.slug}
+              data-tilt
               as={Link}
               to={`/science/${p.slug}`}
               className="flex flex-col overflow-hidden rounded-3xl border border-line bg-cloud shadow-[0_1px_0_rgba(27,54,93,0.04),0_24px_48px_-32px_rgba(27,54,93,0.28)]"

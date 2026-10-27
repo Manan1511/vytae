@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from "react";
 import { Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from "react-router";
 import { initAnalytics, trackPageView } from "./lib/analytics";
 import { CartProvider } from "./lib/cart";
+import { MotionFx } from "./lib/motion";
 import "@fontsource/hanken-grotesk/400.css";
 import "@fontsource/hanken-grotesk/500.css";
 import "@fontsource/hanken-grotesk/600.css";
@@ -43,6 +44,7 @@ export default function App() {
   return (
     <CartProvider>
       <PageTracking />
+      <MotionFx />
       <Outlet />
     </CartProvider>
   );

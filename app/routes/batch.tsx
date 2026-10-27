@@ -5,14 +5,16 @@ import { Eyebrow } from "../components/ui/Eyebrow";
 import { Stroke } from "../components/ui/icons";
 import type { Batch, Check, Stat } from "../content/batches";
 import { loadBatch } from "../lib/catalog";
+import { seoMeta } from "../lib/seo";
 
 const CHECK_FAILED = "We couldn’t check that batch just now. Try again in a moment.";
 
-export function meta() {
-  return [
-    { title: "Batch Passport | VYTAE" },
-    { name: "description", content: "Check the Batch Passport for your VYTAE pack." },
-  ];
+export function meta({ params }: { params?: { code?: string } }) {
+  return seoMeta({
+    title: "Batch Passport | VYTAE",
+    description: "Check the Batch Passport for your VYTAE pack.",
+    path: params?.code ? `/batch/${encodeURIComponent(params.code)}` : "/batch",
+  });
 }
 
 const PRODUCT_NAMES: Record<string, string> = { "rest-well": "Rest Well", "night-reset": "Night Onset" };

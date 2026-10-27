@@ -4,13 +4,15 @@ import { Eyebrow } from "../components/ui/Eyebrow";
 import { BRAND_PATHS } from "../components/ui/brand";
 import { Fill, Stroke } from "../components/ui/icons";
 import { Reveal } from "../lib/motion";
+import { seoMeta } from "../lib/seo";
 import { whatsappUrl } from "../lib/whatsapp";
 
 export function meta() {
-  return [
-    { title: "Contact | VYTAE" },
-    { name: "description", content: "Questions about an order, a product or your Batch Passport." },
-  ];
+  return seoMeta({
+    title: "Contact | VYTAE",
+    description: "Questions about an order, a product or your Batch Passport.",
+    path: "/contact",
+  });
 }
 
 const TOPICS = ["Order", "Product", "Returns", "Partnerships", "Other"];

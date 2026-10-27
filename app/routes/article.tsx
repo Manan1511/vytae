@@ -85,8 +85,8 @@ export default function ArticlePage() {
         </header>
 
         <div className="px-3">
-          <div className="relative mx-auto aspect-[16/7] min-h-[280px] max-w-[1320px] overflow-hidden rounded-[28px] bg-frost">
-            {post.image && <img src={post.image} alt="" className="absolute inset-0 h-full w-full object-cover" />}
+          <div className="relative mx-auto aspect-[16/7] min-[760px]:min-h-[280px] max-w-[1320px] overflow-hidden rounded-[28px] bg-frost">
+            {post.image && <img src={post.image} alt="" data-parallax className="absolute inset-0 h-full w-full object-cover" />}
           </div>
         </div>
 
