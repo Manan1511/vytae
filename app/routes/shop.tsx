@@ -1,18 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLoaderData } from "react-router";
 import { SiteShell } from "../components/layout/SiteShell";
-import { ShopBanner } from "../components/shop/ShopBanner";
 import { ComingSoonCard, ShopCard } from "../components/shop/ShopGrid";
 import { BRAND_PATHS } from "../components/ui/brand";
 import { Fill, Stroke } from "../components/ui/icons";
 import { trackViewItemList } from "../lib/analytics";
 import { seoMeta } from "../lib/seo";
-import { loadCatalog, loadShopBanners } from "../lib/catalog";
+import { loadCatalog } from "../lib/catalog";
 import { Reveal } from "../lib/motion";
 
 export async function loader() {
-  const [products, banners] = await Promise.all([loadCatalog(), loadShopBanners()]);
-  return { products, banners };
+  return { products: await loadCatalog() };
 }
 
 export function meta() {
@@ -82,7 +80,7 @@ const ASSURANCES = [
 ];
 
 export default function ShopPage() {
-  const { products, banners } = useLoaderData<typeof loader>();
+  const { products } = useLoaderData<typeof loader>();
   const [category, setCategory] = useState("All");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<Sort>("featured");
@@ -135,12 +133,10 @@ export default function ShopPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search products or ingredients"
-              className="min-w-0 flex-1 border-0 bg-transparent text-sm text-ink outline-none placeholder:text-[#8a9bb3]"
+              className="min-w-0 flex-1 border-0 bg-transparent text-sm text-ink outline-none"
             />
           </label>
         </div>
-
-        <ShopBanner slides={banners} />
 
         <div className="mb-7 flex flex-wrap items-center justify-between gap-4 border-y border-line-soft py-3.5">
           <div className="flex flex-wrap gap-2">

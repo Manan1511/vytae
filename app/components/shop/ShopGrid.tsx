@@ -43,7 +43,7 @@ export function ShopCard({ product }: { product: Product }) {
           </button>
           <Link
             to={href}
-            className="flex items-center justify-center rounded-full bg-ink px-4 py-[13px] text-sm font-semibold whitespace-nowrap text-white hover:bg-ink-hover"
+            className="flex items-center justify-center rounded-full bg-[linear-gradient(180deg,#24497a_0%,#26497a_100%)] px-4 py-[13px] text-sm font-semibold whitespace-nowrap text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_12px_24px_-14px_rgba(30,62,106,0.7)] hover:bg-none hover:bg-ink-hover"
           >
             Buy now
           </Link>
@@ -75,7 +75,7 @@ export function ComingSoonCard() {
         />
         <button
           type="submit"
-          className="cursor-pointer rounded-full border-0 bg-ink px-[18px] py-2.5 text-[13px] font-semibold whitespace-nowrap text-white hover:bg-ink-hover"
+          className="cursor-pointer rounded-full border-0 bg-[linear-gradient(180deg,#24497a_0%,#26497a_100%)] px-[18px] py-2.5 text-[13px] font-semibold whitespace-nowrap text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_12px_24px_-14px_rgba(30,62,106,0.7)] hover:bg-none hover:bg-ink-hover"
         >
           {sent ? "Done ✓" : "Notify me"}
         </button>
