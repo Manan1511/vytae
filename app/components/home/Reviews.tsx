@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { Testimonial } from "../../lib/catalog";
 import { Reveal } from "../../lib/motion";
 import { Eyebrow } from "../ui/Eyebrow";
+import { SlideDot } from "../ui/SlideDot";
 import { Stroke } from "../ui/icons";
 
 const CAROUSEL_MS = 5000;
@@ -133,17 +134,17 @@ export function Reviews({ reviews }: { reviews: Testimonial[] }) {
           ))}
         </div>
 
-        <div className="mt-7 flex items-center justify-center gap-2 max-[759px]:hidden">
+        <div className="mt-7 flex items-center justify-center max-[759px]:hidden">
           {reviews.map((r, k) => {
             const on = k === rv;
             return (
-              <button
+              <SlideDot
                 key={r.name}
-                type="button"
-                aria-label="Show reviews"
+                active={on}
+                label="Show reviews"
                 onClick={() => pick(k)}
-                className="h-1.5 cursor-pointer rounded-full border-0 p-0 transition-[width,background-color] duration-500"
-                style={{ width: on ? 28 : 6, background: on ? "#26497a" : "#cddbeb" }}
+                activeColor="#26497a"
+                idleColor="#cddbeb"
               />
             );
           })}

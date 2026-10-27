@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { inr, type Product } from "../../content/products";
 import { useSavedCartStore } from "../../lib/cart";
 import { Reveal } from "../../lib/motion";
+import { sizedImage } from "../../lib/shopify/image";
 
 export function ShopCard({ product }: { product: Product }) {
   const cartStore = useSavedCartStore();
@@ -12,7 +13,7 @@ export function ShopCard({ product }: { product: Product }) {
   return (
     <Reveal data-tilt className="flex flex-col overflow-hidden rounded-3xl border border-line bg-cloud shadow-[0_1px_0_rgba(27,54,93,0.04),0_24px_48px_-32px_rgba(27,54,93,0.28)] transition-[transform,box-shadow] duration-[600ms] ease-soft hover:-translate-y-1 hover:shadow-[0_1px_0_rgba(27,54,93,0.04),0_36px_60px_-32px_rgba(27,54,93,0.3)]">
       <Link to={href} className="relative block aspect-square overflow-hidden bg-frost">
-        <img src={product.images[0]} alt={product.name} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+        <img src={sizedImage(product.images[0], 900)} alt={product.name} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
         <span className="absolute top-4 left-4 flex items-center gap-2 rounded-full bg-white px-3 py-[7px] text-xs font-semibold whitespace-nowrap">
           <span className="h-[7px] w-[7px] rounded-full bg-ink" />
           {product.cardStep}

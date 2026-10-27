@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import type { ShopBannerSlide } from "../../lib/catalog";
 import { Reveal } from "../../lib/motion";
+import { sizedImage, sizedSrcSet } from "../../lib/shopify/image";
+import { SlideDot } from "../ui/SlideDot";
 
 const INTERVAL_MS = 6000;
 
@@ -9,6 +11,11 @@ const INTERVAL_MS = 6000;
 export function ShopBanner({ slides }: { slides: ShopBannerSlide[] }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [seen, setSeen] = useState([0]);
+
+  useEffect(() => {
+    setSeen((s) => (s.includes(index) ? s : [...s, index]));
+  }, [index]);
 
   useEffect(() => {
     if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -33,7 +40,16 @@ export function ShopBanner({ slides }: { slides: ShopBannerSlide[] }) {
             className="absolute inset-0 transition-opacity duration-[800ms] ease-soft"
             style={{ opacity: on ? 1 : 0, pointerEvents: on ? "auto" : "none" }}
           >
-            <img src={slide.img} alt="" className="absolute inset-0 h-full w-full object-cover object-[62%_55%]" />
+            {seen.includes(i) && (
+              <img
+                src={sizedImage(slide.img, 1200)}
+                srcSet={sizedSrcSet(slide.img, [800, 1200, 1600])}
+                sizes="(min-width: 1320px) 1200px, 100vw"
+                alt=""
+                fetchPriority={i === 0 ? "high" : undefined}
+                className="absolute inset-0 h-full w-full object-cover object-[62%_55%]"
+              />
+            )}
             <div
               aria-hidden="true"
               className="absolute inset-0 bg-[linear-gradient(90deg,rgba(16,36,68,0.7)_0%,rgba(16,36,68,0.3)_45%,rgba(16,36,68,0)_75%)]"
@@ -57,15 +73,15 @@ export function ShopBanner({ slides }: { slides: ShopBannerSlide[] }) {
           </div>
         );
       })}
-      <div className="absolute right-[clamp(24px,4vw,48px)] bottom-[clamp(24px,4vw,40px)] flex items-center gap-2">
+      <div className="absolute right-[clamp(24px,4vw,48px)] bottom-[clamp(24px,4vw,40px)] flex items-center">
         {slides.map((slide, i) => (
-          <button
+          <SlideDot
             key={slide.title}
-            type="button"
-            aria-label={`Show ${slide.title}`}
+            active={i === index}
+            label={`Show ${slide.title}`}
             onClick={() => setIndex(i)}
-            className="h-1.5 cursor-pointer rounded-full border-0 p-0 transition-[width,background-color] duration-500"
-            style={{ width: i === index ? 28 : 6, background: i === index ? "#ffffff" : "rgba(255,255,255,0.5)" }}
+            activeColor="#ffffff"
+            idleColor="rgba(255,255,255,0.5)"
           />
         ))}
       </div>

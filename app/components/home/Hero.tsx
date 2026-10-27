@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { Reveal } from "../../lib/motion";
 import type { HeroSlide } from "../../lib/catalog";
+import { sizedImage, sizedSrcSet } from "../../lib/shopify/image";
+import { SlideDot } from "../ui/SlideDot";
 
 const INTERVAL_MS = 7000;
 
@@ -22,7 +24,9 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
       {slides.map((slide, i) => (
         <img
           key={`image-${i}`}
-          src={slide.image}
+          src={sizedImage(slide.image, 1200)}
+          srcSet={sizedSrcSet(slide.image, [800, 1200, 1600])}
+          sizes="100vw"
           alt={i === index ? slide.alt : ""}
           aria-hidden={i !== index || undefined}
           className="hero-media transition-opacity duration-[800ms] ease-soft"
@@ -69,15 +73,15 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
         </div>
 
         {slides.length > 1 && (
-          <div className="mt-8 flex items-center gap-2">
+          <div className="mt-8 flex items-center">
             {slides.map((slide, i) => (
-              <button
+              <SlideDot
                 key={`dot-${i}`}
-                type="button"
-                aria-label={`Show slide ${i + 1}: ${slide.headline}`}
+                active={i === index}
+                label={`Show slide ${i + 1}: ${slide.headline}`}
                 onClick={() => setIndex(i)}
-                className="h-1.5 cursor-pointer rounded-full border-0 p-0 transition-[width,background-color] duration-500"
-                style={{ width: i === index ? 28 : 6, background: i === index ? "#ffffff" : "rgba(255,255,255,0.5)" }}
+                activeColor="#ffffff"
+                idleColor="rgba(255,255,255,0.5)"
               />
             ))}
           </div>

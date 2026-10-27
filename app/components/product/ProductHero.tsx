@@ -2,6 +2,7 @@ import { useState, type Dispatch, type SetStateAction } from "react";
 import { Link, useNavigate } from "react-router";
 import { inr, type Product } from "../../content/products";
 import { buyNowHref } from "../../lib/cart";
+import { sizedImage, sizedSrcSet } from "../../lib/shopify/image";
 import { Stroke } from "../ui/icons";
 
 type HeroProps = {
@@ -16,6 +17,11 @@ type HeroProps = {
 export function ProductHero({ product, qty, setQty, added, addItem }: HeroProps) {
   const navigate = useNavigate();
   const [img, setImg] = useState(0);
+  const [seen, setSeen] = useState([0]);
+  const show = (i: number) => {
+    setImg(i);
+    setSeen((s) => (s.includes(i) ? s : [...s, i]));
+  };
   const badge = product.step.replace(/^Step \d+ · /, "");
 
   const back = () => (window.history.length > 1 ? navigate(-1) : navigate("/shop"));
@@ -53,25 +59,30 @@ export function ProductHero({ product, qty, setQty, added, addItem }: HeroProps)
                 key={src}
                 type="button"
                 aria-label="View image"
-                onClick={() => setImg(i)}
+                onClick={() => show(i)}
                 className="relative aspect-square min-w-0 flex-1 cursor-pointer overflow-hidden rounded-xl border-0 bg-frost p-0 transition-opacity duration-300 min-[760px]:flex-none"
                 style={{ opacity: i === img ? 1 : 0.6, boxShadow: i === img ? "0 0 0 2px #26497a" : "none" }}
               >
-                <img src={src} alt="" className="h-full w-full object-cover" />
+                <img src={sizedImage(src, 240)} alt="" className="h-full w-full object-cover" />
               </button>
             ))}
           </div>
 
           <div className="relative w-full overflow-hidden bg-frost max-[759px]:order-1 max-[759px]:h-[96vw] max-[759px]:rounded-[20px] min-[760px]:h-[min(64vh,600px,110vw)] min-[760px]:min-h-[320px] min-[760px]:rounded-3xl">
-            {product.images.map((src, i) => (
-              <img
-                key={src}
-                src={src}
-                alt={i === img ? product.name : ""}
-                className="absolute inset-0 h-full w-full object-cover transition-opacity duration-[600ms]"
-                style={{ opacity: i === img ? 1 : 0 }}
-              />
-            ))}
+            {product.images.map((src, i) =>
+              seen.includes(i) && (
+                <img
+                  key={src}
+                  src={sizedImage(src, 1200)}
+                  srcSet={sizedSrcSet(src, [800, 1200, 1600])}
+                  sizes="(min-width: 760px) 600px, 96vw"
+                  alt={i === img ? product.name : ""}
+                  fetchPriority={i === 0 ? "high" : undefined}
+                  className="starting:opacity-0 absolute inset-0 h-full w-full object-cover transition-opacity duration-[600ms]"
+                  style={{ opacity: i === img ? 1 : 0 }}
+                />
+              )
+            )}
             <span className="absolute top-3.5 left-3.5 flex items-center gap-2 rounded-full bg-white px-3 py-[7px] text-xs font-semibold whitespace-nowrap">
               <span className="h-[7px] w-[7px] rounded-full bg-ink" />
               {badge}
