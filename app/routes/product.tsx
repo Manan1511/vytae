@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router";
 import { SiteShell } from "../components/layout/SiteShell";
 import { ProductHero } from "../components/product/ProductHero";
@@ -14,6 +14,7 @@ import {
 } from "../components/product/ProductSections";
 import type { Product } from "../content/products";
 import { useSavedCartStore } from "../lib/cart";
+import { trackViewItem } from "../lib/analytics";
 import { loadCatalog } from "../lib/catalog";
 import NotFoundPage from "./not-found";
 
@@ -65,6 +66,10 @@ function ProductView({ product, catalog }: { product: Product; catalog: Product[
     setAdded(true);
   };
   const n = sectionNumbers(product);
+
+  useEffect(() => {
+    trackViewItem({ item_id: product.handle, item_name: product.name, price: product.price, quantity: 1 });
+  }, [product.handle, product.name, product.price]);
 
   return (
     <SiteShell variant="solid" active="Shop">

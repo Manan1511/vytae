@@ -3,6 +3,7 @@
 // queues operations so a slow response can never overwrite a newer cart.
 import { createContext, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 import { PRODUCTS } from "../content/products";
+import { trackAddToCart, trackRemoveFromCart } from "./analytics";
 import { storefrontEnabled, storefrontQuery } from "./shopify/storefront";
 
 export type CartLine = {
@@ -147,6 +148,8 @@ function createCartStore(backend: CartBackend): CartStore {
     },
     async add(handle, quantity) {
       await run(() => backend.apply({ kind: "add", handle, quantity }));
+      const line = snapshot.cart?.lines.find((item) => item.handle === handle);
+      if (line && !snapshot.error) trackAddToCart({ item_id: handle, item_name: line.name, price: line.unitPrice, quantity });
     },
     async replace(handle, quantity) {
       await run(() => backend.apply({ kind: "replace", handle, quantity }));
@@ -155,7 +158,11 @@ function createCartStore(backend: CartBackend): CartStore {
       await run(() => backend.apply(quantity < 1 ? { kind: "remove", lineId } : { kind: "setQuantity", lineId, quantity }));
     },
     async remove(lineId) {
+      const line = snapshot.cart?.lines.find((item) => item.id === lineId);
       await run(() => backend.apply({ kind: "remove", lineId }));
+      if (line && !snapshot.error) {
+        trackRemoveFromCart({ item_id: line.handle, item_name: line.name, price: line.unitPrice, quantity: line.quantity });
+      }
     },
     applyDiscount: (code) => run(() => backend.apply({ kind: "discount", code: code.trim() || null }), false),
     async removeDiscount() {

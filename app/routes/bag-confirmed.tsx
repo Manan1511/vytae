@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { SiteShell } from "../components/layout/SiteShell";
 import { Eyebrow } from "../components/ui/Eyebrow";
 import { inr } from "../content/products";
+import { trackPurchase } from "../lib/analytics";
 import { LAST_ORDER_KEY } from "../lib/payment";
 
 export function meta() {
@@ -18,7 +19,7 @@ type LastOrder = {
   amountPaise: number;
   discountPaise: number;
   shippingPaise: number;
-  lines: { name: string; quantity: number; unitPrice: number }[];
+  lines: { handle: string; name: string; quantity: number; unitPrice: number }[];
 };
 
 function readLastOrder(): LastOrder | null {
@@ -33,6 +34,12 @@ function readLastOrder(): LastOrder | null {
 // The checkout writes the order to session storage just before it opens this page.
 export default function BagConfirmedPage() {
   const [order] = useState<LastOrder | null>(readLastOrder);
+
+  useEffect(() => {
+    if (!order || order.status !== "confirmed" || !order.orderName) return;
+    const items = order.lines.map((line) => ({ item_id: line.handle, item_name: line.name, price: line.unitPrice, quantity: line.quantity }));
+    trackPurchase(order.orderName, items, order.amountPaise / 100, order.shippingPaise / 100);
+  }, [order]);
 
   if (!order) {
     return (

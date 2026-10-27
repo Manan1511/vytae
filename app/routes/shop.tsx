@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLoaderData } from "react-router";
 import { SiteShell } from "../components/layout/SiteShell";
 import { ShopBanner } from "../components/shop/ShopBanner";
 import { ComingSoonCard, ShopCard } from "../components/shop/ShopGrid";
 import { BRAND_PATHS } from "../components/ui/brand";
 import { Fill, Stroke } from "../components/ui/icons";
+import { trackViewItemList } from "../lib/analytics";
 import { loadCatalog, loadShopBanners } from "../lib/catalog";
 import { Reveal } from "../lib/motion";
 
@@ -84,6 +85,13 @@ export default function ShopPage() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<Sort>("featured");
   const active = CATEGORIES.find((c) => c.label === category) ?? CATEGORIES[0];
+
+  useEffect(() => {
+    trackViewItemList(
+      "Shop",
+      products.map((p) => ({ item_id: p.handle, item_name: p.name, price: p.price, quantity: 1 })),
+    );
+  }, [products]);
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();

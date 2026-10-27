@@ -1,8 +1,9 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { SiteShell } from "../components/layout/SiteShell";
 import { INDIAN_STATES } from "../content/states";
 import { inr } from "../content/products";
+import { trackAddPaymentInfo, trackBeginCheckout } from "../lib/analytics";
 import { parseBuyLine, useBuyNowStore, useCartStore, useSavedCartStore } from "../lib/cart";
 import { LAST_ORDER_KEY, confirmPayment, openCheckout, startPayment, type ConfirmedPayment } from "../lib/payment";
 
@@ -46,6 +47,15 @@ export default function BagPage() {
   const [codeError, setCodeError] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
+
+  // Checkout starts when the shopper reaches the details step.
+  useEffect(() => {
+    if (step === "details" && cart) {
+      trackBeginCheckout(
+        cart.lines.map((line) => ({ item_id: line.handle, item_name: line.name, price: line.unitPrice, quantity: line.quantity })),
+      );
+    }
+  }, [step]);
 
   if (cart === null) {
     return (
@@ -115,6 +125,7 @@ export default function BagPage() {
   const pay = async () => {
     if (!cart || paying || !canPay) return;
     setPaying(true);
+    trackAddPaymentInfo(lines.map((line) => ({ item_id: line.handle, item_name: line.name, price: line.unitPrice, quantity: line.quantity })));
     setPayError(null);
     const contact = { name: details.name.trim(), phone: details.phone.trim(), email: details.email.trim() };
     try {
@@ -155,7 +166,7 @@ export default function BagPage() {
             amountPaise: started.amountPaise,
             discountPaise: started.breakdown.discountPaise,
             shippingPaise: started.breakdown.shippingPaise,
-            lines: lines.map((line) => ({ name: line.name, quantity: line.quantity, unitPrice: line.unitPrice })),
+            lines: lines.map((line) => ({ handle: line.handle, name: line.name, quantity: line.quantity, unitPrice: line.unitPrice })),
           }),
         );
       } catch {
