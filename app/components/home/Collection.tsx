@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { GOALS, type GoalKey, RITUAL, SLEEP_PRODUCTS } from "../../content/home";
+import { GOALS, type GoalKey } from "../../content/home";
+import type { Product } from "../../lib/catalog";
 import { addToBag } from "../../lib/bag";
 import { Reveal } from "../../lib/motion";
 import { Eyebrow } from "../ui/Eyebrow";
@@ -64,7 +65,9 @@ function ProductCard({ productKey, href, image, moment, title, tag, desc, specs 
   );
 }
 
-export function Collection() {
+export function Collection({ products }: { products: Product[] }) {
+  const singles = products.filter((p) => !p.categories.includes("Rituals"));
+  const ritual = products.find((p) => p.categories.includes("Rituals"));
   const [goal, setGoal] = useState<GoalKey>("sleep");
   const active = GOALS.find((g) => g.key === goal) ?? GOALS[0];
 
@@ -111,29 +114,31 @@ export function Collection() {
 
       {goal === "sleep" ? (
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-5">
-          {SLEEP_PRODUCTS.map((p) => (
+          {singles.map((p) => (
             <ProductCard
-              key={p.key}
-              productKey={p.key}
-              href={p.href}
-              image={p.image}
-              moment={p.moment}
+              key={p.handle}
+              productKey={p.handle}
+              href={`/products/${p.handle}`}
+              image={p.home.image}
+              moment={p.home.moment}
               title={p.name}
-              tag={p.format}
-              desc={p.desc}
-              specs={p.specs}
+              tag={p.home.tag}
+              desc={p.home.desc}
+              specs={p.home.specs}
             />
           ))}
-          <ProductCard
-            productKey={RITUAL.key}
-            href={RITUAL.href}
-            image={RITUAL.image}
-            moment="Full ritual"
-            title={RITUAL.name}
-            tag="Set"
-            desc={RITUAL.desc}
-            specs={RITUAL.specs}
-          />
+          {ritual && (
+            <ProductCard
+              productKey={ritual.handle}
+              href={`/products/${ritual.handle}`}
+              image={ritual.home.image}
+              moment={ritual.home.moment}
+              title={ritual.name}
+              tag={ritual.home.tag}
+              desc={ritual.home.desc}
+              specs={ritual.home.specs}
+            />
+          )}
         </div>
       ) : (
         <div className="flex flex-col items-center gap-4 rounded-3xl border border-line bg-[radial-gradient(60%_80%_at_50%_0%,#e6edf6_0%,#dfe8f3_70%)] px-6 py-[clamp(56px,7vw,96px)] text-center">

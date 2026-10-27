@@ -1,4 +1,4 @@
-// Homepage copy and data, copied from the design (Landing Page v13). Replaced by Shopify metaobjects in the CMS phase.
+// Homepage copy and mock data. Hero slides, testimonials and products come from Shopify when the Storefront is configured.
 
 export const HERO = {
   image: "/assets/hero-night-e.webp",
@@ -21,38 +21,6 @@ export const GOALS = [
 
 export type GoalKey = (typeof GOALS)[number]["key"];
 
-// `key` matches the Shopify product handle and the design's bag keys.
-export const SLEEP_PRODUCTS = [
-  {
-    key: "night-reset",
-    href: "/products/night-reset",
-    format: "Sachet",
-    name: "Night Onset",
-    moment: "Sleep onset",
-    desc: "Stir into water as you start to wind down.",
-    specs: ["Glycine", "L-Theanine"],
-    image: "/assets/life-pour.webp",
-  },
-  {
-    key: "rest-well",
-    href: "/products/rest-well",
-    format: "Capsule",
-    name: "Rest Well",
-    moment: "Deep sleep",
-    desc: "Take one before bed, as the second step.",
-    specs: ["Magnesium bisglycinate"],
-    image: "/assets/night-reset-scene.webp",
-  },
-];
-
-export const RITUAL = {
-  key: "sleep-ritual",
-  href: "/products/sleep-ritual",
-  name: "The Sleep Ritual",
-  desc: "Night Onset + Rest Well together — both steps, best value. Save [00]%.",
-  specs: ["Night Onset · Sachet", "Rest Well · Capsule"],
-  image: "/assets/life-sachets.webp",
-};
 
 // Placeholder testimonials from the design. Replace with real Judge.me reviews before launch.
 export const REVIEWS = [
@@ -88,32 +56,6 @@ export const REVIEWS = [
   },
 ];
 
-export const ARTICLES = [
-  {
-    title: "How we test every VYTAE batch.",
-    desc: "From raw materials to the finished pack, step by step.",
-    category: "Quality",
-    minutes: "7 min",
-    image: "/assets/test-tubes.webp",
-    href: "/science/how-we-test",
-  },
-  {
-    title: "Glycine, explained.",
-    desc: "A simple guide to one of the amino acids in Night Onset.",
-    category: "Ingredients",
-    minutes: "4 min",
-    image: "/assets/capsules-dropper.webp",
-    href: "/science/glycine-explained",
-  },
-  {
-    title: "Inside the Batch Passport.",
-    desc: "Why we made every batch traceable from the pack.",
-    category: "Quality",
-    minutes: "3 min",
-    image: "/assets/open-capsule.webp",
-    href: "/science/inside-the-batch-passport",
-  },
-];
 
 export const UGC = [
   { product: "Night Onset", handle: "@[creator]" },

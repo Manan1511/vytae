@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { REVIEWS } from "../../content/home";
+import type { Testimonial } from "../../lib/catalog";
 import { Reveal } from "../../lib/motion";
 import { Eyebrow } from "../ui/Eyebrow";
 import { Stroke } from "../ui/icons";
 
-const COUNT = REVIEWS.length;
 const CAROUSEL_MS = 5000;
 const FADE_MS = 450;
 
@@ -59,7 +58,8 @@ function ReviewCard({
 }
 
 // Desktop: three reviews rotate with a fade. Mobile: all reviews in a snap-scroll row.
-export function Reviews() {
+export function Reviews({ reviews }: { reviews: Testimonial[] }) {
+  const count = reviews.length;
   const [rv, setRv] = useState(0);
   const [fade, setFade] = useState(false);
   const held = useRef(false);
@@ -71,7 +71,7 @@ export function Reviews() {
       if (held.current) return;
       setFade(true);
       timer = window.setTimeout(() => {
-        setRv((r) => (r + 1) % COUNT);
+        setRv((r) => (r + 1) % count);
         setFade(false);
       }, FADE_MS);
     }, CAROUSEL_MS);
@@ -79,7 +79,7 @@ export function Reviews() {
       window.clearInterval(id);
       window.clearTimeout(timer);
     };
-  }, []);
+  }, [count]);
 
   const pick = (k: number) => {
     held.current = true;
@@ -87,7 +87,9 @@ export function Reviews() {
     setFade(false);
   };
 
-  const visible = [0, 1, 2].map((o) => REVIEWS[(rv + o) % COUNT]);
+  if (count === 0) return null;
+
+  const visible = [0, 1, 2].map((o) => reviews[(rv + o) % count]);
 
   return (
     <section id="reviews" data-screen-label="Testimonials" className="relative pt-[clamp(24px,3vw,40px)] pb-[clamp(80px,10vw,128px)]">
@@ -126,13 +128,13 @@ export function Reviews() {
         </div>
 
         <div className="no-scrollbar -mx-10 grid snap-x snap-mandatory grid-flow-col auto-cols-[82%] gap-4 overflow-x-auto scroll-px-10 px-10 pt-1 pb-6 min-[760px]:hidden">
-          {REVIEWS.map((r) => (
+          {reviews.map((r) => (
             <ReviewCard key={r.name} quote={r.quote} name={r.name} product={r.product} className="snap-start" />
           ))}
         </div>
 
         <div className="mt-7 flex items-center justify-center gap-2 max-[759px]:hidden">
-          {REVIEWS.map((r, k) => {
+          {reviews.map((r, k) => {
             const on = k === rv;
             return (
               <button

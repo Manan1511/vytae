@@ -1,9 +1,9 @@
 import { Link } from "react-router";
-import { ARTICLES } from "../../content/home";
+import type { Post } from "../../lib/catalog";
 import { Reveal } from "../../lib/motion";
 import { Eyebrow } from "../ui/Eyebrow";
 
-export function Science() {
+export function Science({ articles }: { articles: Post[] }) {
   return (
     <section id="science" data-screen-label="Science band" className="mx-auto max-w-[1320px] px-10 pb-[clamp(80px,10vw,128px)]">
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,380px),1fr))] items-stretch gap-[clamp(40px,6vw,96px)]">
@@ -42,11 +42,11 @@ export function Science() {
       </div>
 
       <div className="no-scrollbar mt-[clamp(40px,5vw,64px)] grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-x-4 gap-y-10 max-[759px]:-mx-10 max-[759px]:grid-flow-col max-[759px]:auto-cols-[82%] max-[759px]:grid-cols-none max-[759px]:snap-x max-[759px]:snap-mandatory max-[759px]:overflow-x-auto max-[759px]:px-10 max-[759px]:pb-6 max-[759px]:scroll-px-10">
-        {ARTICLES.map((a) => (
+        {articles.map((a) => (
           <Reveal
-            key={a.href}
+            key={a.slug}
             as={Link}
-            to={a.href}
+            to={`/science/${a.slug}`}
             className="group flex snap-start flex-col gap-4 overflow-hidden rounded-3xl border border-line bg-white text-ink shadow-[0_1px_0_rgba(27,54,93,0.04),0_24px_48px_-32px_rgba(27,54,93,0.28)]"
           >
             <span className="relative block aspect-[4/3] overflow-hidden bg-frost">

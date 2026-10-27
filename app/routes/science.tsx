@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { SiteShell } from "../components/layout/SiteShell";
 import { Eyebrow } from "../components/ui/Eyebrow";
-import { FEATURED, POSTS, SCIENCE_CATEGORIES } from "../content/science";
+import { FEATURED, SCIENCE_CATEGORIES } from "../content/science";
+import { loadPosts } from "../lib/catalog";
 import { Reveal } from "../lib/motion";
 
 export function meta() {
@@ -12,10 +13,17 @@ export function meta() {
   ];
 }
 
+export async function loader() {
+  return { posts: await loadPosts() };
+}
+
 export default function SciencePage() {
+  const { posts } = useLoaderData<typeof loader>();
+  const featured = posts.find((p) => p.slug === FEATURED.slug);
+  const rest = posts.filter((p) => p.slug !== FEATURED.slug);
   const [category, setCategory] = useState<(typeof SCIENCE_CATEGORIES)[number]>("All");
   const [subscribed, setSubscribed] = useState(false);
-  const posts = POSTS.filter((p) => category === "All" || p.category === category);
+  const listed = rest.filter((p) => category === "All" || p.category === category);
 
   return (
     <SiteShell variant="solid" active="Science">
@@ -34,29 +42,31 @@ export default function SciencePage() {
         </div>
       </section>
 
-      <section data-screen-label="Featured" className="mx-auto max-w-[1320px] px-[clamp(20px,3vw,40px)] pb-[clamp(56px,6vw,88px)]">
-        <Reveal
-          as={Link}
-          to={`/science/${FEATURED.slug}`}
-          className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] overflow-hidden rounded-[28px] border border-line bg-cloud shadow-[0_1px_0_rgba(27,54,93,0.04),0_24px_48px_-32px_rgba(27,54,93,0.28)] transition-shadow duration-500 hover:shadow-[0_36px_60px_-32px_rgba(27,54,93,0.3)]"
-        >
-          <span className="relative block min-h-[clamp(300px,32vw,460px)] overflow-hidden bg-frost">
-            <img src={FEATURED.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
-          </span>
-          <span className="flex flex-col justify-center gap-[18px] p-[clamp(32px,4vw,64px)]">
-            <span className="flex gap-2.5 text-xs font-semibold tracking-[0.12em] text-ink-muted uppercase">
-              <span>Featured</span>
-              <span>·</span>
-              <span>{FEATURED.category}</span>
+      {featured && (
+        <section data-screen-label="Featured" className="mx-auto max-w-[1320px] px-[clamp(20px,3vw,40px)] pb-[clamp(56px,6vw,88px)]">
+          <Reveal
+            as={Link}
+            to={`/science/${featured.slug}`}
+            className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] overflow-hidden rounded-[28px] border border-line bg-cloud shadow-[0_1px_0_rgba(27,54,93,0.04),0_24px_48px_-32px_rgba(27,54,93,0.28)] transition-shadow duration-500 hover:shadow-[0_36px_60px_-32px_rgba(27,54,93,0.3)]"
+          >
+            <span className="relative block min-h-[clamp(300px,32vw,460px)] overflow-hidden bg-frost">
+              <img src={featured.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
             </span>
-            <span className="text-[clamp(30px,3vw,44px)] leading-[1.08] tracking-[-0.025em] text-balance">
-              {FEATURED.title}
+            <span className="flex flex-col justify-center gap-[18px] p-[clamp(32px,4vw,64px)]">
+              <span className="flex gap-2.5 text-xs font-semibold tracking-[0.12em] text-ink-muted uppercase">
+                <span>Featured</span>
+                <span>·</span>
+                <span>{featured.category}</span>
+              </span>
+              <span className="text-[clamp(30px,3vw,44px)] leading-[1.08] tracking-[-0.025em] text-balance">
+                {featured.title}
+              </span>
+              <span className="text-base leading-[1.6] text-ink-body">{featured.desc}</span>
+              <span className="text-[13px] text-ink-muted">{featured.minutes} read · [Author name]</span>
             </span>
-            <span className="text-base leading-[1.6] text-ink-body">{FEATURED.desc}</span>
-            <span className="text-[13px] text-ink-muted">{FEATURED.minutes} read · [Author name]</span>
-          </span>
-        </Reveal>
-      </section>
+          </Reveal>
+        </section>
+      )}
 
       <section data-screen-label="Articles" className="mx-auto max-w-[1320px] px-[clamp(20px,3vw,40px)] pb-[clamp(80px,10vw,128px)]">
         <div className="mb-8 flex flex-wrap gap-2 border-b border-line-soft pb-7">
@@ -77,7 +87,7 @@ export default function SciencePage() {
           })}
         </div>
         <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,340px),1fr))] gap-x-6 gap-y-12">
-          {posts.map((p) => (
+          {listed.map((p) => (
             <Reveal
               key={p.slug}
               as={Link}

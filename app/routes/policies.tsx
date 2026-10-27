@@ -1,17 +1,48 @@
-import { Link, useParams } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { SiteShell } from "../components/layout/SiteShell";
 import { COMPANY, POLICIES } from "../content/policies";
+import { loadPolicy, type PolicyView } from "../lib/catalog";
 import { Reveal } from "../lib/motion";
 import NotFoundPage from "./not-found";
 
-export function meta({ params }: { params: { doc?: string } }) {
-  const policy = POLICIES.find((p) => p.key === params.doc);
+async function loadPolicyRoute(doc: string | undefined) {
+  const key = POLICIES.find((p) => p.key === doc)?.key;
+  return { doc: key ?? null, policy: key ? await loadPolicy(key) : null };
+}
+
+export function loader({ params }: { params: { doc?: string } }) {
+  return loadPolicyRoute(params.doc);
+}
+
+export async function clientLoader({
+  serverLoader,
+  params,
+}: {
+  serverLoader: () => Promise<unknown>;
+  params: { doc?: string };
+}) {
+  try {
+    return await serverLoader();
+  } catch {
+    return loadPolicyRoute(params.doc);
+  }
+}
+clientLoader.hydrate = true;
+
+export function meta({ loaderData }: { loaderData?: { policy: PolicyView | null } }) {
+  const policy = loaderData?.policy;
   return [{ title: policy ? `${policy.title} | VYTAE` : "Page not found | VYTAE" }];
 }
 
+// The policy body is HTML from Shopify. Each section heading starts a bordered block, as in the design.
+const BODY_CLASS = [
+  "[&>p:first-child]:mt-3 [&>p:first-child]:text-[17px]",
+  "[&_p]:m-0 [&_p]:text-base [&_p]:leading-[1.7] [&_p]:text-ink-body",
+  "[&_h2]:mt-3.5 [&_h2]:scroll-mt-24 [&_h2]:border-t [&_h2]:border-line-soft [&_h2]:pt-7 [&_h2]:text-[22px] [&_h2]:font-medium [&_h2]:tracking-[-0.01em]",
+].join(" ");
+
 export default function PolicyPage() {
-  const { doc } = useParams();
-  const policy = POLICIES.find((p) => p.key === doc);
+  const { doc, policy } = useLoaderData<typeof loader>();
   if (!policy) return <NotFoundPage />;
 
   return (
@@ -22,7 +53,7 @@ export default function PolicyPage() {
       >
         <div className="mb-10 flex flex-wrap gap-2">
           {POLICIES.map((p) => {
-            const on = p.key === policy.key;
+            const on = p.key === doc;
             return (
               <Link
                 key={p.key}
@@ -40,9 +71,9 @@ export default function PolicyPage() {
         <div className="flex flex-wrap items-start gap-12">
           <aside className="flex flex-1 basis-[200px] max-w-[240px] flex-col gap-2.5 text-sm min-[960px]:sticky min-[960px]:top-[84px]">
             <div className="text-[11px] font-semibold tracking-[0.14em] text-ink-muted uppercase">On this page</div>
-            {policy.sections.map((s, i) => (
-              <a key={s.heading} href={`#sec-${i}`} className="leading-[1.4] text-ink-body">
-                {s.heading}
+            {policy.toc.map((t) => (
+              <a key={t.id} href={`#${t.id}`} className="leading-[1.4] text-ink-body">
+                {t.label}
               </a>
             ))}
           </aside>
@@ -52,19 +83,10 @@ export default function PolicyPage() {
               {policy.title}
             </Reveal>
             <span className="text-sm text-ink-muted">Last updated [DD Month YYYY]</span>
-            <p className="m-0 mt-3 text-[17px] leading-[1.7] text-ink-body">{policy.intro}</p>
-            {policy.sections.map((s, i) => (
-              <div key={s.heading} id={`sec-${i}`} className="mt-3.5 flex scroll-mt-24 flex-col gap-2.5 border-t border-line-soft pt-7">
-                <Reveal as="h2" className="m-0 text-[22px] font-medium tracking-[-0.01em]">
-                  {s.heading}
-                </Reveal>
-                {s.paragraphs.map((p) => (
-                  <p key={p} className="m-0 text-base leading-[1.7] text-ink-body">
-                    {p}
-                  </p>
-                ))}
-              </div>
-            ))}
+            <div
+              className={`flex flex-col gap-2.5 ${BODY_CLASS}`}
+              dangerouslySetInnerHTML={{ __html: policy.html }}
+            />
             <div className="mt-8 rounded-[20px] border border-line bg-cloud p-6 text-[15px] leading-[1.6]">
               Questions about this policy?{" "}
               <Link to="/contact" className="font-semibold underline">

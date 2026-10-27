@@ -1,82 +1,52 @@
-import { Link, useParams } from "react-router";
+import { Link, useLoaderData } from "react-router";
 import { SiteShell } from "../components/layout/SiteShell";
-import { PRODUCT_BY_HANDLE } from "../content/products";
-import {
-  ARTICLE_TOC,
-  FEATURED,
-  MAGNESIUM_ARTICLE,
-  PLACEHOLDER_BODY,
-  POSTS,
-  findPost,
-  type Post,
-} from "../content/science";
+import { loadArticle, type ArticleView } from "../lib/catalog";
 import { Reveal } from "../lib/motion";
 import NotFoundPage from "./not-found";
 
-export function meta({ params }: { params: { slug?: string } }) {
-  const post = findPost(params.slug);
+async function loadArticleRoute(slug: string | undefined) {
+  return { article: await loadArticle(slug ?? "") };
+}
+
+export function loader({ params }: { params: { slug?: string } }) {
+  return loadArticleRoute(params.slug);
+}
+
+// An article added after the last build has no prerendered data, so the browser reads it from the Storefront.
+export async function clientLoader({
+  serverLoader,
+  params,
+}: {
+  serverLoader: () => Promise<unknown>;
+  params: { slug?: string };
+}) {
+  try {
+    return await serverLoader();
+  } catch {
+    return loadArticleRoute(params.slug);
+  }
+}
+clientLoader.hydrate = true;
+
+export function meta({ loaderData }: { loaderData?: { article: ArticleView | null } }) {
+  const post = loaderData?.article?.post;
   return [{ title: post ? `${post.title} | VYTAE` : "Page not found | VYTAE" }];
 }
 
-const MORE = ["glycine-explained", "how-we-test", "building-a-ritual"];
-const H2 = "m-0 mt-4 scroll-mt-24 text-[32px] leading-[1.15] font-normal tracking-[-0.02em]";
-
-function MagnesiumBody() {
-  const m = MAGNESIUM_ARTICLE;
-  return (
-    <>
-      <p className="m-0">
-        {m.intro}
-        <em>{m.emphasis}</em>
-        {m.introEnd}
-      </p>
-      <h2 id="form" className={H2}>
-        What “form” means
-      </h2>
-      <p className="m-0 text-ink-body">{m.formP}</p>
-      <blockquote className="my-4 text-[clamp(26px,2.6vw,34px)] leading-[1.25] tracking-[-0.02em] text-balance">
-        {m.quote}
-      </blockquote>
-      <h2 id="bisglycinate" className={H2}>
-        Meet bisglycinate
-      </h2>
-      <p className="m-0 text-ink-body">{m.bisP}</p>
-      <div className="flex flex-col gap-2.5 rounded-[20px] border border-line bg-cloud p-6">
-        <span className="text-[11px] font-semibold tracking-[0.14em] text-ink-muted uppercase">Found in</span>
-        <div className="flex flex-wrap gap-2.5">
-          {(["night-reset", "rest-well"] as const).map((h) => (
-            <Link
-              key={h}
-              to={`/products/${h}`}
-              className="rounded-full border border-line bg-white px-4 py-2 text-sm font-semibold text-ink hover:bg-frost"
-            >
-              {PRODUCT_BY_HANDLE[h].name} →
-            </Link>
-          ))}
-        </div>
-      </div>
-      <h2 id="vytae" className={H2}>
-        How we use it
-      </h2>
-      <p className="m-0 text-ink-body">{m.vytaeP}</p>
-      <div id="refs" className="mt-6 flex flex-col gap-2 border-t border-line-soft pt-6 text-[13px] leading-[1.6] text-ink-muted">
-        <span className="text-[11px] font-semibold tracking-[0.14em] uppercase">References</span>
-        {m.refs.map((r) => (
-          <span key={r}>{r}</span>
-        ))}
-        <span className="mt-2">{m.disclaimer}</span>
-      </div>
-    </>
-  );
-}
+// The body is HTML from Shopify, so the styles reach into its elements.
+const BODY_CLASS = [
+  "[&_h2]:mt-4 [&_h2]:scroll-mt-24 [&_h2]:text-[32px] [&_h2]:leading-[1.15] [&_h2]:font-normal [&_h2]:tracking-[-0.02em]",
+  "[&_p]:m-0 [&_p]:text-ink-body [&>p:first-child]:text-ink",
+  "[&_blockquote]:my-4 [&_blockquote]:text-[clamp(26px,2.6vw,34px)] [&_blockquote]:leading-[1.25] [&_blockquote]:tracking-[-0.02em] [&_blockquote]:text-balance",
+  "[&_a]:font-semibold [&_a]:text-ink [&_a]:underline",
+  "[&_#references]:mt-6 [&_#references]:border-t [&_#references]:border-line-soft [&_#references]:pt-6 [&_#references]:text-[11px] [&_#references]:tracking-[0.14em] [&_#references]:text-ink-muted [&_#references]:uppercase",
+  "[&_#references~p]:text-[13px] [&_#references~p]:leading-[1.6] [&_#references~p]:text-ink-muted",
+].join(" ");
 
 export default function ArticlePage() {
-  const { slug } = useParams();
-  const post = findPost(slug);
-  if (!post) return <NotFoundPage />;
-
-  const isMagnesium = post.slug === FEATURED.slug;
-  const more = MORE.map((s) => POSTS.find((p) => p.slug === s)).filter((p): p is Post => Boolean(p));
+  const { article } = useLoaderData<typeof loader>();
+  if (!article) return <NotFoundPage />;
+  const { post, html, toc, more } = article;
 
   return (
     <SiteShell variant="solid" active="Science">
@@ -99,15 +69,15 @@ export default function ArticlePage() {
 
         <div className="px-3">
           <div className="relative mx-auto aspect-[16/7] min-h-[280px] max-w-[1320px] overflow-hidden rounded-[28px] bg-frost">
-            <img src={post.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
+            {post.image && <img src={post.image} alt="" className="absolute inset-0 h-full w-full object-cover" />}
           </div>
         </div>
 
         <div className="mx-auto flex max-w-[1120px] flex-wrap items-start gap-12 px-[clamp(20px,3vw,40px)] pt-[clamp(48px,6vw,80px)] pb-[clamp(64px,8vw,104px)]">
-          {isMagnesium && (
+          {toc.length > 0 && (
             <aside className="flex flex-1 basis-[200px] max-w-[240px] flex-col gap-3 text-sm min-[960px]:sticky min-[960px]:top-[84px]">
               <div className="text-[11px] font-semibold tracking-[0.14em] text-ink-muted uppercase">In this article</div>
-              {ARTICLE_TOC.map((t) => (
+              {toc.map((t) => (
                 <a key={t.id} href={`#${t.id}`} className="text-ink-body">
                   {t.label}
                 </a>
@@ -130,9 +100,10 @@ export default function ArticlePage() {
               </div>
             </aside>
           )}
-          <div className="flex min-w-0 max-w-[680px] flex-1 basis-[480px] flex-col gap-[22px] text-[18px] leading-[1.7] text-ink">
-            {isMagnesium ? <MagnesiumBody /> : <p className="m-0 text-ink-body">{PLACEHOLDER_BODY}</p>}
-          </div>
+          <div
+            className={`flex min-w-0 max-w-[680px] flex-1 basis-[480px] flex-col gap-[22px] text-[18px] leading-[1.7] text-ink ${BODY_CLASS}`}
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
         </div>
       </article>
 

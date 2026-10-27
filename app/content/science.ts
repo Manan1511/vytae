@@ -1,7 +1,10 @@
+import { escapeHtml } from "./html.ts";
+import { PRODUCTS } from "./products.ts";
+
 // Science posts and the magnesium article, copied from the design export (Science.dc.html, Article.dc.html).
 // Other article bodies are not written yet, so they show the design's placeholder until copy is supplied.
 
-export type Category = "Ingredients" | "Quality" | "Rituals";
+export type Category = string;
 
 export type Post = {
   slug: string;
@@ -97,9 +100,31 @@ export const MAGNESIUM_ARTICLE = {
   disclaimer: "This article is for general information only and is not medical advice.",
 };
 
-export const ARTICLE_TOC = [
-  { label: "What “form” means", id: "form" },
-  { label: "Meet bisglycinate", id: "bisglycinate" },
-  { label: "How we use it", id: "vytae" },
-  { label: "References", id: "refs" },
-];
+// Articles on the home page, in order. Slugs are the article handles.
+export const HOME_ARTICLE_SLUGS = ["how-we-test", "glycine-explained", "inside-the-batch-passport"];
+
+// Articles suggested under an article. Other posts fill in when these are missing.
+export const MORE_SLUGS = ["glycine-explained", "how-we-test", "building-a-ritual"];
+
+const nameOf = (handle: string) => PRODUCTS.find((p) => p.handle === handle)?.name ?? handle;
+
+// Article body as HTML. The seed writes it to Shopify and the fallback renders it, so both show the same copy.
+export function articleBodyHtml(slug: string): string {
+  if (slug !== FEATURED.slug) return `<p>${escapeHtml(PLACEHOLDER_BODY)}</p>`;
+  const m = MAGNESIUM_ARTICLE;
+  const found = ["night-reset", "rest-well"].map((h) => `<a href="/products/${h}">${escapeHtml(nameOf(h))} →</a>`).join(" · ");
+  return [
+    `<p>${escapeHtml(m.intro)}<em>${escapeHtml(m.emphasis)}</em>${escapeHtml(m.introEnd)}</p>`,
+    "<h2>What “form” means</h2>",
+    `<p>${escapeHtml(m.formP)}</p>`,
+    `<blockquote>${escapeHtml(m.quote)}</blockquote>`,
+    "<h2>Meet bisglycinate</h2>",
+    `<p>${escapeHtml(m.bisP)}</p>`,
+    `<p>Found in: ${found}</p>`,
+    "<h2>How we use it</h2>",
+    `<p>${escapeHtml(m.vytaeP)}</p>`,
+    "<h2>References</h2>",
+    ...m.refs.map((r) => `<p>${escapeHtml(r)}</p>`),
+    `<p>${escapeHtml(m.disclaimer)}</p>`,
+  ].join("");
+}

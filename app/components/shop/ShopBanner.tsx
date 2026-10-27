@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { SHOP_BANNERS } from "../../content/products";
+import type { ShopBannerSlide } from "../../lib/catalog";
 import { Reveal } from "../../lib/motion";
 
 const INTERVAL_MS = 6000;
 
 // Crossfading banner. Autoplay pauses on hover and stays off for reduced motion.
-export function ShopBanner() {
+export function ShopBanner({ slides }: { slides: ShopBannerSlide[] }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setInterval(() => setIndex((i) => (i + 1) % SHOP_BANNERS.length), INTERVAL_MS);
+    const id = window.setInterval(() => setIndex((i) => (i + 1) % slides.length), INTERVAL_MS);
     return () => window.clearInterval(id);
-  }, [paused]);
+  }, [paused, slides.length]);
+
+  if (slides.length === 0) return null;
 
   return (
     <Reveal
@@ -22,7 +24,7 @@ export function ShopBanner() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {SHOP_BANNERS.map((slide, i) => {
+      {slides.map((slide, i) => {
         const on = i === index;
         return (
           <div
@@ -56,7 +58,7 @@ export function ShopBanner() {
         );
       })}
       <div className="absolute right-[clamp(24px,4vw,48px)] bottom-[clamp(24px,4vw,40px)] flex items-center gap-2">
-        {SHOP_BANNERS.map((slide, i) => (
+        {slides.map((slide, i) => (
           <button
             key={slide.title}
             type="button"

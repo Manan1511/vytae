@@ -1,11 +1,17 @@
 import { useMemo, useState } from "react";
+import { useLoaderData } from "react-router";
 import { SiteShell } from "../components/layout/SiteShell";
 import { ShopBanner } from "../components/shop/ShopBanner";
 import { ComingSoonCard, ShopCard } from "../components/shop/ShopGrid";
 import { BRAND_PATHS } from "../components/ui/brand";
 import { Fill, Stroke } from "../components/ui/icons";
-import { PRODUCTS } from "../content/products";
+import { loadCatalog, loadShopBanners } from "../lib/catalog";
 import { Reveal } from "../lib/motion";
+
+export async function loader() {
+  const [products, banners] = await Promise.all([loadCatalog(), loadShopBanners()]);
+  return { products, banners };
+}
 
 export function meta() {
   return [
@@ -73,6 +79,7 @@ const ASSURANCES = [
 ];
 
 export default function ShopPage() {
+  const { products, banners } = useLoaderData<typeof loader>();
   const [category, setCategory] = useState("All");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<Sort>("featured");
@@ -80,12 +87,12 @@ export default function ShopPage() {
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const filtered = PRODUCTS.filter(
-      (p) => active.match(p.categories) && (!q || `${p.name} ${p.tags}`.toLowerCase().includes(q)),
+    const filtered = products.filter(
+      (p) => active.match(p.categories) && (!q || `${p.name} ${p.searchTerms}`.toLowerCase().includes(q)),
     );
     if (sort === "featured") return filtered;
     return [...filtered].sort((a, b) => (sort === "low" ? a.price - b.price : b.price - a.price));
-  }, [active, query, sort]);
+  }, [products, active, query, sort]);
 
   const q = query.trim();
   const showSoon = !q && (category === "All" || category === "Coming soon" || category === "Everyday wellness");
@@ -123,13 +130,13 @@ export default function ShopPage() {
           </label>
         </div>
 
-        <ShopBanner />
+        <ShopBanner slides={banners} />
 
         <div className="mb-7 flex flex-wrap items-center justify-between gap-4 border-y border-line-soft py-3.5">
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((c) => {
               const on = c.label === category;
-              const count = PRODUCTS.filter((p) => c.match(p.categories)).length;
+              const count = products.filter((p) => c.match(p.categories)).length;
               return (
                 <button
                   key={c.label}

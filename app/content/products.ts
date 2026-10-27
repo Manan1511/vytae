@@ -1,8 +1,6 @@
 // Product and science copy from the design export (Product.dc.html and Shop.dc.html).
 // Prices are the seeded values from Bag.dc.html. Bracketed placeholders from the design stay in the copy.
-// Replaced by Shopify product data in the Shopify phase.
-
-export type Handle = "night-reset" | "rest-well" | "sleep-ritual";
+// Seed source for Shopify (scripts/seed-shopify.ts) and the offline fallback when the Storefront is not configured.
 
 export const inr = (n: number) => "₹" + n.toLocaleString("en-IN");
 
@@ -18,8 +16,11 @@ export type Science = {
   cards: EvidenceCard[];
 };
 
+// Home page card copy. Shopify stores it with the rest of the product content.
+export type HomeCard = { moment: string; desc: string; specs: string[]; tag: string; image: string };
+
 export type Product = {
-  handle: Handle;
+  handle: string;
   name: string;
   price: number;
   // Shop card
@@ -27,7 +28,8 @@ export type Product = {
   cardStep: string;
   short: string;
   categories: string[];
-  tags: string;
+  searchTerms: string;
+  home: HomeCard;
   // Product page
   step: string;
   eyebrow: string;
@@ -129,13 +131,14 @@ const REST_REFS =
 export const PRODUCTS: Product[] = [
   {
     handle: "sleep-ritual",
+    home: { moment: "Full ritual", desc: "Night Onset + Rest Well together — both steps, best value. Save [00]%.", specs: ["Night Onset · Sachet", "Rest Well · Capsule"], tag: "Set", image: "/assets/life-sachets.webp" },
     name: "The Sleep Ritual",
     price: 1799,
     format: "Night Onset + Rest Well",
     cardStep: "Best value · Save [00]%",
     short: "Both steps, one ritual set",
     categories: ["Sleep", "Rituals"],
-    tags: "ritual combo bundle set night reset rest well magnesium sleep",
+    searchTerms: "ritual combo bundle set night reset rest well magnesium sleep",
     step: "Ritual set · Best value",
     eyebrow: "VYTAE · Two-step sleep ritual",
     sub: "Night Onset + Rest Well",
@@ -184,13 +187,14 @@ export const PRODUCTS: Product[] = [
   },
   {
     handle: "night-reset",
+    home: { moment: "Sleep onset", desc: "Stir into water as you start to wind down.", specs: ["Glycine", "L-Theanine"], tag: "Sachet", image: "/assets/life-pour.webp" },
     name: "Night Onset",
     price: 899,
     format: "Sachet",
     cardStep: "Sleep onset",
     short: "Glycine and L-theanine",
     categories: ["Sleep"],
-    tags: "magnesium glycine theanine cherry monk fruit sachet sleep",
+    searchTerms: "magnesium glycine theanine cherry monk fruit sachet sleep",
     step: "Step 01 · Sachet",
     eyebrow: "VYTAE · Glycine + L-theanine",
     sub: "Stir-in sleep-onset sachet",
@@ -239,13 +243,14 @@ export const PRODUCTS: Product[] = [
   },
   {
     handle: "rest-well",
+    home: { moment: "Deep sleep", desc: "Take one before bed, as the second step.", specs: ["Magnesium bisglycinate"], tag: "Capsule", image: "/assets/night-reset-scene.webp" },
     name: "Rest Well",
     price: 1099,
     format: "Capsule",
     cardStep: "Deep sleep",
     short: "Fully chelated magnesium bisglycinate · 60 capsules",
     categories: ["Sleep"],
-    tags: "magnesium bisglycinate capsule sleep",
+    searchTerms: "magnesium bisglycinate capsule sleep",
     step: "Step 02 · Capsule",
     eyebrow: "VYTAE · Magnesium bisglycinate",
     sub: "Fully Chelated Magnesium Bisglycinate",
@@ -308,12 +313,6 @@ export const PRODUCTS: Product[] = [
     ],
   },
 ];
-
-export const PRODUCT_BY_HANDLE = Object.fromEntries(PRODUCTS.map((p) => [p.handle, p])) as Record<Handle, Product>;
-
-export function getProduct(handle: string | undefined): Product | undefined {
-  return PRODUCTS.find((p) => p.handle === handle);
-}
 
 // Product-page evidence checks, shown in the Batch Passport band.
 export const PASSPORT_CHECKS = [

@@ -1,8 +1,9 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router";
 import { SiteShell } from "../components/layout/SiteShell";
-import { PRODUCT_BY_HANDLE, inr, type Handle } from "../content/products";
+import { inr } from "../content/products";
 import { useBag, writeBag, type Bag } from "../lib/bag";
+import { useCatalog } from "../lib/catalog";
 
 export function meta() {
   return [{ title: "Bag | VYTAE" }, { name: "robots", content: "noindex" }];
@@ -35,9 +36,19 @@ export default function BagPage() {
   const [step, setStep] = useState<Step>(() => (searchParams.get("checkout") ? "details" : "bag"));
   const [details, setDetails] = useState<Details>(EMPTY_DETAILS);
 
-  const lines = Object.entries(bag)
-    .filter(([key, qty]) => qty > 0 && key in PRODUCT_BY_HANDLE)
-    .map(([key, qty]) => ({ key: key as Handle, qty, product: PRODUCT_BY_HANDLE[key as Handle] }));
+  const catalog = useCatalog();
+  if (catalog === null) {
+    return (
+      <SiteShell variant="solid">
+        <section className="mx-auto max-w-[1200px] px-[clamp(20px,3vw,40px)] pt-[clamp(36px,4vw,56px)] text-ink-soft">Loading your bag…</section>
+      </SiteShell>
+    );
+  }
+  const byHandle = new Map(catalog.map((p) => [p.handle, p]));
+  const lines = Object.entries(bag).flatMap(([key, qty]) => {
+    const product = byHandle.get(key);
+    return product && qty > 0 ? [{ key, qty, product }] : [];
+  });
   const subtotal = lines.reduce((sum, l) => sum + l.product.price * l.qty, 0);
   const shipping = subtotal === 0 || subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING_FEE;
   const total = subtotal + shipping;

@@ -1,3 +1,5 @@
+import { escapeHtml } from "./html.ts";
+
 // Policy copy from the design export (Legal.dc.html). Cash-on-delivery wording is removed because COD is not offered at launch.
 // Bracketed text is the design's placeholder until the client supplies final terms.
 
@@ -170,3 +172,11 @@ export const POLICIES: Policy[] = [
     ],
   },
 ];
+
+// Policy body as HTML: the intro, then a heading and paragraphs per section. The seed writes this to Shopify.
+export function policyHtml(policy: Policy): string {
+  return [
+    `<p>${escapeHtml(policy.intro)}</p>`,
+    ...policy.sections.map((s) => `<h2>${escapeHtml(s.heading)}</h2>` + s.paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join("")),
+  ].join("");
+}

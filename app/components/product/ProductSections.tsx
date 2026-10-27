@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { Link } from "react-router";
-import { PASSPORT_CHECKS, PRODUCT_BY_HANDLE, inr, type Product } from "../../content/products";
+import { PASSPORT_CHECKS, inr, type Product } from "../../content/products";
 import { addToBag } from "../../lib/bag";
 import { Reveal } from "../../lib/motion";
 import { whatsappUrl } from "../../lib/whatsapp";
@@ -275,9 +275,8 @@ function PairCard({ item, current }: { item: Product; current: boolean }) {
   );
 }
 
-function RitualSetCard({ singles }: { singles: number }) {
+function RitualSetCard({ set, singles }: { set: Product; singles: number }) {
   const [added, setAdded] = useState(false);
-  const set = PRODUCT_BY_HANDLE["sleep-ritual"];
 
   return (
     <Reveal
@@ -327,10 +326,14 @@ function RitualSetCard({ singles }: { singles: number }) {
 }
 
 // Pairs appear on the single-product pages only. The ritual page already is the set.
-export function PairsSection({ product, n }: { product: Product; n: SectionNumbers }) {
+export function PairsSection({ product, n, catalog }: { product: Product; n: SectionNumbers; catalog: Product[] }) {
   if (product.handle === "sleep-ritual") return null;
-  const items = [PRODUCT_BY_HANDLE["night-reset"], PRODUCT_BY_HANDLE["rest-well"]];
-  const singles = items[0].price + items[1].price;
+  const night = catalog.find((p) => p.handle === "night-reset");
+  const rest = catalog.find((p) => p.handle === "rest-well");
+  const set = catalog.find((p) => p.handle === "sleep-ritual");
+  if (!night || !rest || !set) return null;
+  const items = [night, rest];
+  const singles = night.price + rest.price;
 
   return (
     <section
@@ -353,7 +356,7 @@ export function PairsSection({ product, n }: { product: Product; n: SectionNumbe
         {items.map((item) => (
           <PairCard key={item.handle} item={item} current={item.handle === product.handle} />
         ))}
-        <RitualSetCard singles={singles} />
+        <RitualSetCard set={set} singles={singles} />
       </div>
     </section>
   );
