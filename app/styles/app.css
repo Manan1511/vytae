@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Hanken Grotesk", system-ui, sans-serif;
+  --color-ink: #26497a;
+  --color-ink-hover: #1b3a66;
+  --color-ink-body: #46638a;
+  --color-ink-soft: #5f7797;
+  --color-ink-muted: #6d87a8;
+  --color-mist: #f4f8fc;
+  --color-frost: #e7eef7;
+  --color-cloud: #dfe8f3;
+  --color-line: #cddbeb;
+  --color-line-soft: #dde7f2;
+  --color-hero: #1f3f6e;
+  --color-footer: #21406f;
+  --color-sage: #2e7d58;
+  --ease-soft: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background: var(--color-mist);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  a {
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--color-ink-hover);
+  }
+  input::placeholder {
+    color: #8a9bb3;
+  }
+}
+
+/* Scroll-in reveal. Animation (not transition) so it never fights hover transitions. */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.reveal:not(.is-in) {
+  opacity: 0;
+}
+.reveal.is-in {
+  animation: reveal-up 1s var(--ease-soft) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee {
+  animation: marquee 32s linear infinite;
+}
+.marquee:hover {
+  animation-play-state: paused;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hero: the design drives these with JS breakpoints (1100px stack, 760px narrow). */
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: min(88vh, 860px, 56vw);
+  overflow: hidden;
+}
+.hero-media {
+  position: absolute;
+  top: 0;
+  right: 0;
+  order: 2;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: 62% 55%;
+}
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(16, 36, 68, 0.6) 0%, rgba(16, 36, 68, 0.3) 32%, rgba(16, 36, 68, 0) 52%);
+}
+@media (max-width: 1099px) {
+  .hero {
+    min-height: 0;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .hero-media {
+    position: relative;
+    height: 62vw;
+    margin-top: -14vw;
+    object-position: 64% 55%;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000 30%);
+    -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000 30%);
+  }
+  .hero-scrim {
+    display: none;
+  }
+}
+@media (max-width: 759px) {
+  .hero-media {
+    height: 108vw;
+    margin-top: -30vw;
+    object-position: 71% 60%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal.is-in {
+    animation: none;
+  }
+  .marquee {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
