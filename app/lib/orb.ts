@@ -1,15 +1,15 @@
-// Port of the design's standard-section orb (Landing Page v13 drawOrb).
+// Standard-section orb. Ported from the design's drawOrb, with the palettes and cycle timing of the updated orb.
 export type Palette = { a: number[]; b: number[]; g1: number[]; g2: number[] };
 
 const hex = (s: string) => [1, 3, 5].map((i) => parseInt(s.slice(i, i + 2), 16));
 const pal = (a: string, b: string, g1: number[], g2: number[]): Palette => ({ a: hex(a), b: hex(b), g1, g2 });
 
 export const ORB = {
-  cyan: pal("#1f3a8a", "#1e9fd0", [20, 200, 240, 0.55], [140, 240, 200, 0.95]),
-  violet: pal("#2f4fd0", "#35c0d8", [170, 150, 245, 0.55], [100, 110, 235, 0.95]),
-  sunset: pal("#ff7a1a", "#ff1f4b", [255, 120, 200, 0.45], [140, 70, 255, 0.9]),
-  citrus: pal("#ff8a1a", "#ff6a00", [255, 200, 80, 0.45], [255, 212, 0, 0.95]),
-  green: pal("#1a8a2e", "#2aa53a", [170, 240, 120, 0.45], [90, 200, 100, 0.9]),
+  lilac: pal("#676ca0", "#764c93", [205, 190, 219, 0.5], [122, 149, 190, 0.95]),
+  teal: pal("#3676a0", "#3d7aad", [167, 208, 224, 0.5], [63, 134, 182, 0.95]),
+  coral: pal("#dc796c", "#cb7773", [231, 178, 163, 0.5], [229, 150, 143, 0.95]),
+  dusk: pal("#a273a5", "#b8807f", [222, 208, 225, 0.5], [210, 160, 139, 0.95]),
+  rose: pal("#8e5687", "#9b5a91", [226, 193, 210, 0.5], [185, 114, 158, 0.95]),
 };
 
 const mix = (A: number[], B: number[], f: number) => A.map((v, i) => v + (B[i] - v) * f);
@@ -25,11 +25,12 @@ export function drawOrb(cv: HTMLCanvasElement, P: Palette[], t: number) {
   const S = cv.width;
   if (!x || !S) return;
 
-  const seg = 4.5;
+  const seg = 8;
   const pos = t / seg;
   const i = ((Math.floor(pos) % P.length) + P.length) % P.length;
   const j = (i + 1) % P.length;
-  let f = pos - Math.floor(pos);
+  // Hold each palette, then blend into the next over the last fifth of its segment.
+  let f = Math.min(1, Math.max(0, (pos - Math.floor(pos) - 0.8) / 0.2));
   f = f * f * (3 - 2 * f);
   const p = {
     a: mix(P[i].a, P[j].a, f),

@@ -21,11 +21,11 @@ type CardProps = {
 function ProductCard({ productKey, href, image, moment, title, tag, desc, specs }: CardProps) {
   const cartStore = useSavedCartStore();
   return (
-    <Reveal data-tilt className="group flex flex-col overflow-hidden rounded-3xl border border-line bg-white shadow-[0_1px_0_rgba(27,54,93,0.04),0_24px_48px_-32px_rgba(27,54,93,0.28)] transition-[transform,box-shadow] duration-[600ms] ease-soft hover:-translate-y-1 hover:shadow-[0_1px_0_rgba(27,54,93,0.04),0_36px_60px_-32px_rgba(27,54,93,0.3)]">
-      <Link to={href} className="relative block aspect-[4/3] overflow-hidden bg-frost">
+    <Reveal data-tilt className="group relative flex flex-col overflow-hidden rounded-3xl border border-line bg-white shadow-[0_1px_0_rgba(27,54,93,0.04),0_24px_48px_-32px_rgba(27,54,93,0.28)] transition-[transform,box-shadow] duration-[600ms] ease-soft hover:-translate-y-1 hover:shadow-[0_1px_0_rgba(27,54,93,0.04),0_36px_60px_-32px_rgba(27,54,93,0.3)]">
+      <div className="relative block aspect-[4/3] overflow-hidden bg-frost">
         <img
           src={image}
-          alt={title}
+          alt=""
           loading="lazy"
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-soft group-hover:scale-[1.03]"
         />
@@ -33,10 +33,16 @@ function ProductCard({ productKey, href, image, moment, title, tag, desc, specs 
           <span className="h-[7px] w-[7px] rounded-full bg-ink" />
           {moment}
         </span>
-      </Link>
+      </div>
       <div className="flex flex-1 flex-col gap-[18px] p-[clamp(22px,2.4vw,32px)]">
         <div className="flex items-baseline justify-between gap-4">
-          <span className="text-[clamp(28px,2.6vw,36px)] leading-[1.05] font-normal tracking-[-0.025em]">{title}</span>
+          {/* The title link stretches over the whole card, so anywhere on it opens the product. */}
+          <Link
+            to={href}
+            className="text-[clamp(28px,2.6vw,36px)] leading-[1.05] font-normal tracking-[-0.025em] text-ink after:absolute after:inset-0 after:content-['']"
+          >
+            {title}
+          </Link>
           <span className="rounded-full bg-frost px-2.5 py-1 text-xs font-semibold whitespace-nowrap tabular-nums">
             {tag}
           </span>
@@ -53,13 +59,10 @@ function ProductCard({ productKey, href, image, moment, title, tag, desc, specs 
           <button
             type="button"
             onClick={() => void cartStore.add(productKey, 1)}
-            className="inline-flex cursor-pointer items-center rounded-full border-0 bg-ink px-6 py-[13px] text-sm font-semibold whitespace-nowrap text-white transition-colors hover:bg-ink-hover"
+            className="relative z-10 inline-flex cursor-pointer items-center rounded-full border-0 bg-ink px-6 py-[13px] text-sm font-semibold whitespace-nowrap text-white transition-colors hover:bg-ink-hover"
           >
             Add to bag
           </button>
-          <Link to={href} className="border-b border-ink pb-0.5 text-[13px] font-semibold">
-            View details
-          </Link>
         </div>
       </div>
     </Reveal>

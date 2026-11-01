@@ -4,7 +4,7 @@ import { Reveal } from "../../lib/motion";
 import { drawOrb, ORB, type Palette } from "../../lib/orb";
 import { Eyebrow } from "../ui/Eyebrow";
 
-const ORB_SEQUENCE: Palette[] = [ORB.sunset, ORB.violet, ORB.cyan, ORB.citrus, ORB.green];
+const ORB_SEQUENCE: Palette[] = [ORB.lilac, ORB.teal, ORB.coral, ORB.dusk, ORB.rose];
 const ORB_PHASE = 9;
 
 const LEFT = [

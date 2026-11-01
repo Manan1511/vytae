@@ -193,17 +193,6 @@ export default function BatchPage() {
                   )}
                   <div className="flex flex-wrap justify-between gap-2 text-[13px] text-[#4a6488]">
                     <span>Printed on your pack — or scan the QR to fill both in.</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setProduct("rest-well");
-                        setInput("MBGNL102606A");
-                        setError("");
-                      }}
-                      className="cursor-pointer border-0 bg-transparent p-0 text-[13px] font-semibold text-ink underline underline-offset-[3px]"
-                    >
-                      Try MBGNL102606A
-                    </button>
                   </div>
                 </form>
               </div>
@@ -327,7 +316,7 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
           </div>
 
           <div
-            className="relative rounded-[26px] border border-ink bg-white text-ink shadow-[0_40px_80px_-50px_rgba(24,48,84,0.35)] transition-[transform,opacity] duration-1000 ease-soft"
+            className="relative overflow-hidden rounded-[26px] border border-ink bg-white text-ink shadow-[0_40px_80px_-50px_rgba(24,48,84,0.35)] transition-[transform,opacity] duration-1000 ease-soft"
             style={{ transform: animated ? "none" : "translateY(24px) rotate(-1.5deg)", opacity: animated ? 1 : 0 }}
           >
             <div className="flex flex-col gap-[22px] px-[26px] pt-6 pb-[26px]">
@@ -694,12 +683,10 @@ function TestRecord({
 
 function Handover({ from, to }: { from: string; to: string }) {
   return (
-    <div className="mx-auto grid max-w-[1320px] grid-cols-[minmax(0,1fr)_14px_minmax(0,1fr)] items-center gap-3 px-3">
-      <span />
-      <span className="h-9 w-px justify-self-center bg-[#cddbeb]" />
-      <span />
+    <div className="relative mx-auto grid max-w-[1320px] grid-cols-[minmax(0,1fr)_14px_minmax(0,1fr)] items-center gap-3 px-3 py-6">
+      <span aria-hidden="true" className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-[#cddbeb]" />
       <span className="justify-self-end text-[11px] font-bold tracking-[0.16em] whitespace-nowrap text-ink-muted uppercase">Handover</span>
-      <span className="z-[1] flex h-3.5 w-3.5 items-center justify-center justify-self-center rounded-full border border-[#16a34a] bg-white">
+      <span className="relative z-[1] flex h-3.5 w-3.5 items-center justify-center justify-self-center rounded-full border border-[#16a34a] bg-white">
         <span className="h-1.5 w-1.5 rounded-full bg-[#16a34a]" />
       </span>
       <span className="flex min-w-0 flex-col gap-0.5 text-[13px] leading-[1.35] text-ink">
