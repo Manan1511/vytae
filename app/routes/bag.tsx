@@ -355,8 +355,8 @@ export default function BagPage() {
                       <input required inputMode="numeric" pattern="[0-9]{6}" value={details.pin} onChange={field("pin")} className={INPUT} />
                     </label>
                   </div>
-                  <div className="flex items-center justify-between gap-3 pt-1.5">
-                    <button type="button" onClick={backToBag} className="cursor-pointer border-0 bg-transparent p-0 text-sm font-semibold text-ink">
+                  <div className="flex flex-col gap-3 pt-1.5 min-[760px]:flex-row min-[760px]:items-center min-[760px]:justify-between">
+                    <button type="button" onClick={backToBag} className="cursor-pointer border-0 bg-transparent p-0 text-sm font-semibold text-ink max-[759px]:self-start">
                       ← Back to bag
                     </button>
                     <button type="submit" className={PRIMARY}>
@@ -385,8 +385,8 @@ export default function BagPage() {
                       {payError}
                     </p>
                   )}
-                  <div className="flex items-center justify-between gap-3 pt-1.5">
-                    <button type="button" onClick={() => setStep("details")} className="cursor-pointer border-0 bg-transparent p-0 text-sm font-semibold text-ink">
+                  <div className="flex flex-col gap-3 pt-1.5 min-[760px]:flex-row min-[760px]:items-center min-[760px]:justify-between">
+                    <button type="button" onClick={() => setStep("details")} className="cursor-pointer border-0 bg-transparent p-0 text-sm font-semibold text-ink max-[759px]:self-start">
                       ← Edit details
                     </button>
                     <button

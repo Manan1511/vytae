@@ -129,6 +129,15 @@
   }
 }
 
+/* iOS Safari zooms the page into any focused field set under 16px. */
+@media (max-width: 759px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal.is-in {
     animation: none;
