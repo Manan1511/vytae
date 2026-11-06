@@ -103,7 +103,7 @@ const MAGNESIUM: EvidenceCard = {
     {
       who: "Result",
       tags: ["ISI score", "p = 0.049"],
-      d: "Average Insomnia Severity Index drop: 3.9 points with magnesium vs 2.3 with placebo — a +1.6 point greater reduction. Both groups improved; the difference was statistically significant but modest.",
+      d: "Average Insomnia Severity Index drop: 3.9 points with magnesium vs 2.3 with placebo: a +1.6 point greater reduction. Both groups improved; the difference was statistically significant but modest.",
     },
   ],
   ctx: "Tolerability: 93% reported no side effects; no serious adverse events were reported.",
@@ -120,7 +120,7 @@ const EXPLORATORY: EvidenceCard = {
       d: "Participants who reported eating fewer magnesium-rich foods tended to see larger improvements in sleep-difficulty scores.",
     },
   ],
-  ctx: "Dietary intake was self-reported, not confirmed by blood or urine tests. This is a research lead — not proof of deficiency or a guarantee of response.",
+  ctx: "Dietary intake was self-reported, not confirmed by blood or urine tests. This is a research lead, not proof of deficiency or a guarantee of response.",
 };
 
 const NIGHT_REFS =
@@ -131,7 +131,7 @@ const REST_REFS =
 export const PRODUCTS: Product[] = [
   {
     handle: "sleep-ritual",
-    home: { moment: "Full ritual", desc: "Night Onset + Rest Well together — both steps, best value. Save [00]%.", specs: ["Night Onset · Sachet", "Rest Well · Capsule"], tag: "Set", image: "/assets/life-sachets.webp" },
+    home: { moment: "Full ritual", desc: "Night Onset + Rest Well together: both steps, best value. Save [00]%.", specs: ["Night Onset · Sachet", "Rest Well · Capsule"], tag: "Set", image: "/assets/life-sachets.webp" },
     name: "The Sleep Ritual",
     price: 1799,
     format: "Night Onset + Rest Well",
@@ -154,11 +154,11 @@ export const PRODUCTS: Product[] = [
     why: [
       { t: "Step 01 · Night Onset", d: "Glycine + L-theanine, stirred into water as you wind down.", img: "/assets/life-pour.webp" },
       { t: "Step 02 · Rest Well", d: "200 mg elemental magnesium as fully chelated bisglycinate, in the evening.", img: "/assets/night-reset-scene.webp" },
-      { t: "One routine", d: "Simple enough to keep every night — and consistency is what counts.", img: "/assets/life-group.webp" },
+      { t: "One routine", d: "Simple enough to keep every night, and consistency is what counts.", img: "/assets/life-group.webp" },
     ],
     science: {
       title: "Three ingredients. What human studies found.",
-      lede: "Night Onset and Rest Well bring together ingredients each studied for sleep on their own. Here is what the research shows — and where it is still limited.",
+      lede: "Night Onset and Rest Well bring together ingredients each studied for sleep on their own. Here is what the research shows, and where it is still limited.",
       take: "Night Onset brings together 3 g glycine + 200 mg L-theanine. Each 2-capsule Rest Well serving provides 200 mg elemental magnesium as fully chelated bisglycinate.",
       limit: "The magnesium trial used 250 mg/day in another brand’s capsule. Neither Night Onset, Rest Well nor the set has been clinically tested.",
       refs: `${NIGHT_REFS} · ${REST_REFS}`,
@@ -215,15 +215,15 @@ export const PRODUCTS: Product[] = [
     science: {
       title: "Two ingredients. What human studies found.",
       lede: "Glycine and L-theanine have each been studied for sleep on their own. Here is what the research shows, where it is encouraging, and where the evidence is still limited.",
-      take: "Night Onset brings together 3 g glycine + 200 mg L-theanine — doses investigated individually in human studies.",
+      take: "Night Onset brings together 3 g glycine + 200 mg L-theanine, doses investigated individually in human studies.",
       limit: "Research has explored sleep-onset latency, next-morning fatigue/grogginess, and overall subjective sleep quality.",
       refs: NIGHT_REFS,
       note: "Ingredient-level evidence only. Several studies are small or industry-linked; findings should not be read as proof of product efficacy.",
       cards: [GLYCINE, THEANINE],
     },
     proof:
-      "Every batch of Night Onset is sourced, made and independently tested before release — and every pack links to its own record.",
-    pairBody: "Follow Night Onset with Rest Well before bed — or take both as a set and save.",
+      "Every batch of Night Onset is sourced, made and independently tested before release, and every pack links to its own record.",
+    pairBody: "Follow Night Onset with Rest Well before bed, or take both as a set and save.",
     testimonials: [
       { q: "The sachet mixes easily and tastes light. It fits right into the routine I already had.", product: "Night Onset" },
       { q: "A calm, simple way to signal the day is done. I know what’s in it and why.", product: "Night Onset" },
@@ -264,7 +264,7 @@ export const PRODUCTS: Product[] = [
     whyTitle: "A thoughtful addition to your nightly routine.",
     whyLede: "Fully chelated magnesium bisglycinate, made for your evening routine.",
     why: [
-      { t: "Designed around rest", d: "Magnesium supports normal nervous system and muscle function — important aspects of everyday wellbeing.", img: "/assets/glass-rest.webp" },
+      { t: "Designed around rest", d: "Magnesium supports normal nervous system and muscle function, important aspects of everyday wellbeing.", img: "/assets/glass-rest.webp" },
       {
         t: "A considered magnesium choice",
         d: "We use fully chelated magnesium bisglycinate, selected for its potential for good absorption and digestive tolerability.",
@@ -276,14 +276,14 @@ export const PRODUCTS: Product[] = [
       title: "A form chosen for evidence, not exaggerated claims.",
       lede: "Understand what’s inside. See what a human study found. No exaggerated claims. No empty hype.",
       take: "Each 2-capsule serving provides 200 mg elemental magnesium. We have made deliberate use of the available capsule space while keeping fully chelated magnesium bisglycinate and ingredient quality at the centre of the formula.",
-      limit: "The cited study used 250 mg/day, so the dose is not identical. The trial used another brand’s capsule — Rest Well itself has not been clinically tested.",
+      limit: "The cited study used 250 mg/day, so the dose is not identical. The trial used another brand’s capsule. Rest Well itself has not been clinically tested.",
       refs: REST_REFS,
       note: "Ingredient-level evidence. Not a guarantee of individual results.",
       cards: [MAGNESIUM, EXPLORATORY],
     },
     proof:
-      "Much of the market sells “buffered” magnesium — cheap oxide mixed in to inflate the label. Every Rest Well batch is tested by FTIR, proving magnesium is bound to glycine, and XRD, confirming zero unreacted oxide.",
-    pairBody: "Start your evening with Night Onset — or take both as a set and save.",
+      "Much of the market sells “buffered” magnesium: cheap oxide mixed in to inflate the label. Every Rest Well batch is tested by FTIR, proving magnesium is bound to glycine, and XRD, confirming zero unreacted oxide.",
+    pairBody: "Start your evening with Night Onset, or take both as a set and save.",
     testimonials: [
       { q: "Two capsules after dinner is easy to remember. I like knowing exactly which form of magnesium I’m taking.", product: "Rest Well" },
       { q: "I checked my batch on the Batch Passport in seconds. That transparency is why I reordered.", product: "Rest Well" },
@@ -296,7 +296,7 @@ export const PRODUCTS: Product[] = [
       },
       {
         q: "What does “elemental magnesium” mean?",
-        a: "Magnesium is only part of the total weight of the compound. Elemental magnesium is the magnesium itself — the number to compare across food and supplement labels.",
+        a: "Magnesium is only part of the total weight of the compound. Elemental magnesium is the magnesium itself: the number to compare across food and supplement labels.",
       },
       {
         q: "Has Rest Well itself been tested in a clinical trial?",

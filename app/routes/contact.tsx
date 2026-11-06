@@ -99,7 +99,7 @@ export default function ContactPage() {
           <div className="rounded-[28px] border border-line bg-white p-[clamp(24px,3vw,40px)] shadow-[0_1px_2px_rgba(27,54,93,0.05),0_32px_64px_-40px_rgba(27,54,93,0.35)]">
             {sent ? (
               <div className="flex flex-col items-start gap-4 py-10">
-                <span className="text-[32px] tracking-[-0.02em]">Thank you — we’ve got it.</span>
+                <span className="text-[32px] tracking-[-0.02em]">Thank you. We’ve got it.</span>
                 <span className="text-base leading-[1.6] text-ink-body">We’ll reply to your email within one business day.</span>
                 <button
                   type="button"

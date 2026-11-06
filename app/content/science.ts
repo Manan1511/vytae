@@ -28,7 +28,7 @@ export const POSTS: Post[] = [
   {
     slug: "reading-a-label",
     title: "Reading a supplement label, line by line.",
-    desc: "What each part of a label tells you — and what to look for.",
+    desc: "What each part of a label tells you, and what to look for.",
     category: "Quality",
     minutes: "5 min",
     image: "/assets/hands-capsules.webp",
@@ -82,20 +82,20 @@ export function findPost(slug: string | undefined): Post | undefined {
   return POSTS.find((p) => p.slug === slug);
 }
 
-export const PLACEHOLDER_BODY = "[Article body copy — to be written and reviewed.]";
+export const PLACEHOLDER_BODY = "[Article body copy: to be written and reviewed.]";
 
 // Body of the magnesium article. Bracketed text is the design's placeholder.
 export const MAGNESIUM_ARTICLE = {
   intro:
-    "Magnesium is one of the most common minerals in supplements — but on its own, it isn’t stable. It’s always paired with another compound, and that pairing is what we call its ",
+    "Magnesium is one of the most common minerals in supplements, but on its own, it isn’t stable. It’s always paired with another compound, and that pairing is what we call its ",
   emphasis: "form",
-  introEnd: ". [Article body copy — to be written and reviewed.]",
+  introEnd: ". [Article body copy: to be written and reviewed.]",
   formP:
     "Common forms include oxide, citrate and bisglycinate. Each behaves differently, and each label should tell you which one you’re getting. [Body copy.]",
   quote: "“The form isn’t a footnote. It’s one of the first things we decide.”",
   bisP: "Magnesium bisglycinate is magnesium bound to two molecules of glycine, an amino acid. [Body copy.]",
   vytaeP:
-    "Both VYTAE sleep formulas use magnesium bisglycinate — paired with complementary ingredients in Night Onset, and on its own in Rest Well. [Body copy.]",
+    "Both VYTAE sleep formulas use magnesium bisglycinate, paired with complementary ingredients in Night Onset, and on its own in Rest Well. [Body copy.]",
   refs: ["1. [Reference citation]", "2. [Reference citation]"],
   disclaimer: "This article is for general information only and is not medical advice.",
 };

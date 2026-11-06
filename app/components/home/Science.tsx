@@ -14,7 +14,7 @@ export function Science({ articles }: { articles: Post[] }) {
               Made for what your body absorbs.
             </Reveal>
             <Reveal as="p" className="m-0 text-[17px] leading-[1.6] text-ink-body text-pretty">
-              We look at the details at every stage — the form, the dose and how it works with your body — because
+              We look at the details at every stage (the form, the dose and how it works with your body) because
               consistency matters.
             </Reveal>
             <Reveal

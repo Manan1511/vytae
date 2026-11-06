@@ -375,7 +375,7 @@ export default function BagPage() {
                   <div className="flex items-center justify-between gap-4 rounded-[18px] border-[1.5px] border-ink bg-[#f5f8fc] px-5 py-[18px]">
                     <span className="flex flex-col gap-1">
                       <span className="text-base font-semibold">Pay online</span>
-                      <span className="text-sm text-ink-soft">UPI, cards, netbanking and wallets — secured by Razorpay.</span>
+                      <span className="text-sm text-ink-soft">UPI, cards, netbanking and wallets, secured by Razorpay.</span>
                     </span>
                     <span className="h-5 w-5 flex-none rounded-full border-[1.5px] border-ink bg-ink shadow-[inset_0_0_0_4px_#ffffff]" />
                   </div>

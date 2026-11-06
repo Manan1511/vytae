@@ -74,7 +74,7 @@ export default function AboutPage() {
             We believe wellness should be easy to trust.
           </Reveal>
           <p className="m-0 max-w-[600px] text-[19px] leading-[1.6] text-pretty text-ink-body">
-            VYTAE makes considered supplements for everyday rituals — clearly formulated, carefully made and traceable down
+            VYTAE makes considered supplements for everyday rituals: clearly formulated, carefully made and traceable down
             to the batch.
           </p>
         </div>
@@ -103,7 +103,7 @@ export default function AboutPage() {
               We started VYTAE to do the opposite: fewer, purposeful ingredients; plain-language labels; and a Batch Passport
               on every pack so you can see exactly where your batch came from.
             </p>
-            <p className="m-0">Our first ritual is sleep. It won’t be our last. [Founder story — to be confirmed.]</p>
+            <p className="m-0">Our first ritual is sleep. It won’t be our last. [Founder story: to be confirmed.]</p>
           </div>
         </div>
       </section>

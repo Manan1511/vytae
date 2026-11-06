@@ -23,7 +23,7 @@ const STAGES = [
   {
     n: "01",
     title: "Ingredient sourcing",
-    desc: "We source the raw material ourselves, against purity specs that meet global standards — before any manufacturing begins.",
+    desc: "We source the raw material ourselves, against purity specs that meet global standards, before any manufacturing begins.",
     result: "4 of 4 tests passed",
     icon: "M5 19c0-8 6-14 14-14 0 8-6 14-14 14zM5 19l7-7",
   },
@@ -136,7 +136,7 @@ export default function BatchPage() {
                     No batch flies to you without one.
                   </h1>
                   <p className="m-0 max-w-[520px] text-[17px] leading-[1.6] text-[rgba(255,255,255,0.9)]">
-                    Every bottle carries a Batch Passport — what it went through, across three independent checkpoints.
+                    Every bottle carries a Batch Passport: what it went through, across three independent checkpoints.
                   </p>
                 </div>
                 <form
@@ -192,7 +192,7 @@ export default function BatchPage() {
                     </span>
                   )}
                   <div className="flex flex-wrap justify-between gap-2 text-[13px] text-[#4a6488]">
-                    <span>Printed on your pack — or scan the QR to fill both in.</span>
+                    <span>Printed on your pack, or scan the QR to fill both in.</span>
                   </div>
                 </form>
               </div>
@@ -302,7 +302,7 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
               No batch flies to you without one.
             </h1>
             <p className="m-0 max-w-[460px] text-[clamp(17px,1.3vw,19px)] leading-[1.55] text-pretty text-[#3d5a80]">
-              Every bottle of Vytae carries a Batch Passport — the full record of what your supplement went through before it
+              Every bottle of Vytae carries a Batch Passport: the full record of what your supplement went through before it
               reached you, across three independent checkpoints.
             </p>
             <div className="flex flex-wrap gap-3 pt-1">
@@ -350,7 +350,7 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
               </div>
             </div>
             <div className="border-t border-[#bbf7d0] bg-[#dcfce7] px-[26px] py-3.5 text-[13px] leading-[1.45] font-medium text-[#166534]">
-              Matched to the batch number on your pack — this record is specific to this batch.
+              Matched to the batch number on your pack. This record is specific to this batch.
             </div>
           </div>
         </div>
@@ -364,7 +364,7 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
           </h2>
           <p className="m-0 max-w-[560px] text-lg leading-[1.6] text-pretty text-[#3d5a80]">
             We designed the Batch Passport so nothing about your supplement has to be taken on faith. Below is exactly what
-            this batch cleared — not marketing language, the actual record.
+            this batch cleared: not marketing language, but the actual record.
           </p>
         </div>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,280px),1fr))] gap-6">
@@ -402,7 +402,7 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
             </h2>
             <p className="m-0 max-w-[520px] text-[17px] leading-[1.6] text-pretty text-[#3d5a80]">
               Most supplement brands in India leave ingredient sourcing to their contract manufacturer. Vytae doesn’t. We
-              source every raw ingredient ourselves, and hold it to purity specifications that meet the best global standards —
+              source every raw ingredient ourselves, and hold it to purity specifications that meet the best global standards,
               before a single capsule is made.
             </p>
           </div>
@@ -417,7 +417,7 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
               </span>
             </div>
             <p className="m-0 text-[15px] leading-[1.6] text-pretty text-[#3d5a80]">
-              Sourced independently, not left to the manufacturer — qualified and tested by Vytae against the specification below.
+              Sourced independently, not left to the manufacturer; qualified and tested by Vytae against the specification below.
             </p>
             <Stats stats={batch.stage1.stats} />
           </div>
@@ -440,7 +440,7 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
               Made under continuous quality control.
             </h2>
             <p className="m-0 max-w-[520px] text-[17px] leading-[1.6] text-pretty text-[#3d5a80]">
-              Once sourced, the ingredient moves to manufacturing — the process is audited, documented and certified at every stage.
+              Once sourced, the ingredient moves to manufacturing; the process is audited, documented and certified at every stage.
             </p>
           </div>
           <div className="flex flex-col gap-[22px] rounded-[22px] border border-line bg-white p-[clamp(24px,2.8vw,36px)]">
@@ -486,7 +486,7 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
               Tested independently, before release.
             </h2>
             <p className="m-0 max-w-[520px] text-[17px] leading-[1.6] text-pretty text-[#3d5a80]">
-              Before release, the finished batch — capsule, not just raw material — goes to an independent, NABL-accredited
+              Before release, the finished batch (capsule, not just raw material) goes to an independent, NABL-accredited
               third-party lab. Nothing ships without clearing this stage.
             </p>
           </div>
@@ -524,7 +524,7 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
               This batch earned its passport. <span className="text-[#16a34a]">Every batch has to.</span>
             </h2>
             <p className="m-0 max-w-[480px] text-lg leading-[1.6] text-pretty text-[#3d5a80]">
-              If a batch doesn’t clear all three stages, it doesn’t get a passport — and it doesn’t reach a shelf. That’s the
+              If a batch doesn’t clear all three stages, it doesn’t get a passport, and it doesn’t reach a shelf. That’s the
               only promise we’re interested in making.
             </p>
             <div className="flex flex-wrap gap-3 pt-1.5">

@@ -15,7 +15,7 @@ export function Passport() {
         </div>
         <div className="flex max-w-[480px] flex-col gap-[26px]">
           <Reveal as="p" className="m-0 text-[17px] leading-[1.6] text-[rgba(255,255,255,0.88)] text-pretty">
-            Every VYTAE pack has its own Batch Passport — the full record of where its ingredients came from, how it was
+            Every VYTAE pack has its own Batch Passport: the full record of where its ingredients came from, how it was
             made and what the lab tests found. Enter the batch number printed on your pack to see it.
           </Reveal>
           <Reveal className="flex flex-wrap items-center gap-x-6 gap-y-4">

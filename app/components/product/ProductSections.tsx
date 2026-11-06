@@ -305,7 +305,7 @@ function RitualSetCard({ set, singles }: { set: Product; singles: number }) {
           </span>
         </div>
         <span className="-mt-2 text-[15px] leading-[1.55] text-pretty text-[rgba(255,255,255,0.9)]">
-          Night Onset + Rest Well together — both steps, one set.
+          Night Onset + Rest Well together: both steps, one set.
         </span>
         <div className="mt-auto flex flex-wrap items-center gap-x-[18px] gap-y-3 pt-1">
           <button

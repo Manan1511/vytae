@@ -84,7 +84,7 @@ export function Collection({ products }: { products: Product[] }) {
             Find what your body needs.
           </Reveal>
           <Reveal as="p" className="m-0 max-w-[520px] text-base leading-[1.6] text-ink-body">
-            Purposeful formulas for everyday health goals — pick yours and build a routine that fits.
+            Purposeful formulas for everyday health goals. Pick yours and build a routine that fits.
           </Reveal>
         </div>
         <Link to="/shop" className="border-b border-ink pb-0.5 text-[13px] font-semibold whitespace-nowrap">
@@ -153,7 +153,7 @@ export function Collection({ products }: { products: Product[] }) {
           </span>
           <span className="text-[clamp(26px,2.6vw,36px)] tracking-[-0.02em]">{active.label} formulas are on the way.</span>
           <span className="max-w-[440px] text-[15px] leading-[1.6] text-ink-soft">
-            Made to the same standard as our sleep ritual — sourced by us, tested by NABL-accredited labs, traceable batch
+            Made to the same standard as our sleep ritual: sourced by us, tested by NABL-accredited labs, traceable batch
             by batch.
           </span>
           <button

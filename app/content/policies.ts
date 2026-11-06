@@ -29,7 +29,7 @@ export const POLICIES: Policy[] = [
       {
         heading: "How we use your information",
         paragraphs: [
-          "To process and deliver orders, provide customer support, send order updates, prevent fraud, and — only with your consent — send marketing communications.",
+          "To process and deliver orders, provide customer support, send order updates, prevent fraud, and, only with your consent, send marketing communications.",
         ],
       },
       {
@@ -41,7 +41,7 @@ export const POLICIES: Policy[] = [
       {
         heading: "Sharing your information",
         paragraphs: [
-          "We share information only with service providers who help us operate — such as payment processors, fulfilment and courier partners (including Amazon Multi-Channel Fulfilment), review platforms and analytics tools — or when required by law. We never sell your personal data.",
+          "We share information only with service providers who help us operate, such as payment processors, fulfilment and courier partners (including Amazon Multi-Channel Fulfilment), review platforms and analytics tools. We also share it when required by law. We never sell your personal data.",
         ],
       },
       {

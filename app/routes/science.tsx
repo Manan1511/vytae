@@ -39,7 +39,7 @@ export default function SciencePage() {
             The thinking behind the formula.
           </Reveal>
           <p className="m-0 max-w-[560px] text-lg leading-[1.6] text-pretty text-ink-body">
-            Clear writing on ingredients, quality and everyday rituals — so you always know what you’re taking, and why.
+            Clear writing on ingredients, quality and everyday rituals, so you always know what you’re taking, and why.
           </p>
         </div>
       </section>
@@ -121,7 +121,7 @@ export default function SciencePage() {
             New writing, once a month.
           </Reveal>
           <p className="m-0 max-w-[460px] text-base leading-[1.6] text-[rgba(255,255,255,0.88)]">
-            Ingredient notes, quality updates and simple rituals — straight to your inbox.
+            Ingredient notes, quality updates and simple rituals, straight to your inbox.
           </p>
           <form
             onSubmit={(e) => {
