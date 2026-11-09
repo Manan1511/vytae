@@ -48,15 +48,15 @@ export function ProductHero({ product, qty, setQty, added, addItem }: HeroProps)
                 type="button"
                 aria-label="View image"
                 onClick={() => show(i)}
-                className="relative aspect-square min-w-0 flex-1 cursor-pointer overflow-hidden rounded-xl border-0 bg-frost p-0 transition-opacity duration-300 min-[760px]:flex-none"
+                className="relative aspect-square min-w-0 flex-1 cursor-pointer overflow-hidden rounded-xl border-0 bg-white p-0 transition-opacity duration-300 min-[760px]:flex-none"
                 style={{ opacity: i === img ? 1 : 0.6, boxShadow: i === img ? "0 0 0 2px #26497a" : "none" }}
               >
-                <img src={sizedImage(src, 240)} alt="" className="h-full w-full object-cover" />
+                <img src={sizedImage(src, 240)} alt="" className="h-full w-full object-contain" />
               </button>
             ))}
           </div>
 
-          <div className="relative w-full overflow-hidden bg-frost max-[759px]:order-1 max-[759px]:h-[96vw] max-[759px]:rounded-[20px] min-[760px]:h-[min(64vh,600px,110vw)] min-[760px]:min-h-[320px] min-[760px]:rounded-3xl">
+          <div className="relative w-full overflow-hidden bg-white max-[759px]:order-1 max-[759px]:h-[96vw] max-[759px]:rounded-[20px] min-[760px]:h-[min(64vh,600px,110vw)] min-[760px]:min-h-[320px] min-[760px]:rounded-3xl">
             {product.images.map((src, i) =>
               seen.includes(i) && (
                 <img
@@ -66,7 +66,7 @@ export function ProductHero({ product, qty, setQty, added, addItem }: HeroProps)
                   sizes="(min-width: 760px) 600px, 96vw"
                   alt={i === img ? product.name : ""}
                   fetchPriority={i === 0 ? "high" : undefined}
-                  className="starting:opacity-0 absolute inset-0 h-full w-full object-cover transition-opacity duration-[600ms]"
+                  className="starting:opacity-0 absolute inset-0 h-full w-full object-contain transition-opacity duration-[600ms]"
                   style={{ opacity: i === img ? 1 : 0 }}
                 />
               )
