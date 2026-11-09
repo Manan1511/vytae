@@ -24,7 +24,6 @@ export function ProductHero({ product, qty, setQty, added, addItem }: HeroProps)
   };
   const badge = product.step.replace(/^Step \d+ · /, "");
 
-  const back = () => (window.history.length > 1 ? navigate(-1) : navigate("/shop"));
   const buyNow = () => navigate(buyNowHref(product.handle, qty));
 
   return (
@@ -32,18 +31,7 @@ export function ProductHero({ product, qty, setQty, added, addItem }: HeroProps)
       data-screen-label="Product"
       className="mx-auto max-w-[1320px] px-[clamp(20px,3vw,40px)] pt-5 pb-[clamp(56px,7vw,96px)]"
     >
-      <button
-        type="button"
-        onClick={back}
-        className="mb-5 inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[rgba(27,54,93,0.14)] bg-[rgba(255,255,255,0.6)] py-[7px] pr-3.5 pl-2.5 text-[13px] font-semibold text-ink hover:bg-white"
-      >
-        <Stroke size={14} strokeWidth={1.6}>
-          <path d="M15 5l-7 7 7 7" />
-        </Stroke>
-        Back
-      </button>
-
-      <nav aria-label="Breadcrumb" className="mb-5 flex gap-2 text-[13px] text-ink-muted">
+      <nav aria-label="Breadcrumb" className="mb-5 flex gap-2 text-[13px] leading-[1.3] text-ink-muted">
         <Link to="/shop" className="text-ink-muted">
           Shop
         </Link>

@@ -21,6 +21,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    line-height: normal;
   }
   body {
     background: var(--color-mist);

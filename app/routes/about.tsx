@@ -81,7 +81,7 @@ export default function AboutPage() {
       </section>
 
       <section data-screen-label="Image" className="px-3">
-        <div className="relative mx-auto aspect-[16/7] max-w-[1480px] min-[760px]:min-h-[300px] overflow-hidden rounded-[28px] bg-frost">
+        <div className="relative mx-auto aspect-[16/7] max-w-[1480px] min-h-[300px] overflow-hidden rounded-[28px] bg-frost">
           <img src="/assets/life-group.webp" alt="" data-parallax className="absolute inset-0 h-full w-full object-cover" />
         </div>
       </section>

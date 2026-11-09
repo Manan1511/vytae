@@ -197,9 +197,9 @@ export function ProofSection({ product, n }: { product: Product; n: SectionNumbe
             {PASSPORT_CHECKS.map((check) => (
               <Reveal
                 key={check.n}
-                className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 rounded-[18px] border border-[rgba(255,255,255,0.16)] bg-[rgba(255,255,255,0.1)] px-5 py-[18px]"
+                className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-[18px] border border-[rgba(255,255,255,0.16)] bg-[rgba(255,255,255,0.1)] p-3.5 min-[760px]:gap-4 min-[760px]:px-5 min-[760px]:py-[18px]"
               >
-                <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(255,255,255,0.5)] text-[13px] font-semibold">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(255,255,255,0.5)] text-[13px] font-semibold min-[760px]:h-11 min-[760px]:w-11">
                   {check.n}
                 </span>
                 <span className="flex flex-col gap-[3px]">
