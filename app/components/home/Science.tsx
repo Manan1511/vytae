@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import type { Post } from "../../lib/catalog";
 import { Reveal } from "../../lib/motion";
 import { Eyebrow } from "../ui/Eyebrow";
+import { LoopVideo } from "../ui/LoopVideo";
 
 export function Science({ articles }: { articles: Post[] }) {
   return (
@@ -32,14 +33,10 @@ export function Science({ articles }: { articles: Post[] }) {
           </div>
         </div>
         <Reveal className="relative min-h-[clamp(360px,44vw,620px)] overflow-hidden rounded-[28px] bg-[#c9d8ea]">
-          <video
+          <LoopVideo
             src="/assets/science-body.mp4"
             poster="/assets/science-body-c.webp"
-            aria-label="VYTAE formulation science"
-            autoPlay
-            muted
-            loop
-            playsInline
+            label="VYTAE formulation science"
             className="absolute inset-0 h-full w-full object-cover"
           />
         </Reveal>
