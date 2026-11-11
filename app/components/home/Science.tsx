@@ -32,10 +32,14 @@ export function Science({ articles }: { articles: Post[] }) {
           </div>
         </div>
         <Reveal className="relative min-h-[clamp(360px,44vw,620px)] overflow-hidden rounded-[28px] bg-[#c9d8ea]">
-          <img
-            src="/assets/science-body-c.webp"
-            alt="VYTAE formulation science"
-            loading="lazy"
+          <video
+            src="/assets/science-body.mp4"
+            poster="/assets/science-body-c.webp"
+            aria-label="VYTAE formulation science"
+            autoPlay
+            muted
+            loop
+            playsInline
             className="absolute inset-0 h-full w-full object-cover"
           />
         </Reveal>
