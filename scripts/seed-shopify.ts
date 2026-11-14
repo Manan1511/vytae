@@ -398,8 +398,9 @@ async function seedArticles(): Promise<void> {
   for (const post of [FEATURED, ...POSTS]) {
     const existing = listed.blog.articles.nodes.find((a: Data) => a.handle === post.slug || a.title === post.title);
     // The cover is uploaded once. Shopify imports it from the uploaded file's CDN URL.
+    // REFRESH_COVERS lists cover paths (comma separated) whose file changed and must upload again.
     let image: { url: string; altText: string } | undefined;
-    if (!existing?.image) {
+    if (!existing?.image || (process.env.REFRESH_COVERS ?? "").split(",").includes(post.image)) {
       const fileId = await createFile(post.image, post.title);
       image = { url: await waitForFileUrl(fileId), altText: post.title };
     }
