@@ -259,7 +259,7 @@ async function seedProducts(): Promise<void> {
   for (const product of PRODUCTS) {
     const { handle, name, price, images, categories, ...content } = product;
     const existing = (
-      await gql(`query($h: String!) { productByHandle(handle: $h) { id media(first: 1) { nodes { id } } } }`, { h: handle })
+      await gql(`query($h: String!) { productByHandle(handle: $h) { id media(first: 50) { nodes { id } } } }`, { h: handle })
     ).productByHandle;
 
     const data = await gql(
@@ -291,8 +291,19 @@ async function seedProducts(): Promise<void> {
     failOnUserErrors(data.productSet, `productSet ${handle}`);
     const id: string = data.productSet.product.id;
 
-    // The gallery is uploaded once. Later runs keep the media already on the product.
-    if (!existing || existing.media.nodes.length === 0) {
+    // The gallery is uploaded once. Later runs keep the media already on the product, unless REFRESH_GALLERY
+    // lists the handle (comma separated). Then the old media is deleted and the whole gallery uploads again.
+    const refresh = (process.env.REFRESH_GALLERY ?? "").split(",").includes(handle);
+    if (existing && refresh && existing.media.nodes.length > 0) {
+      const removed = await gql(
+        `mutation($id: ID!, $ids: [ID!]!) {
+           productDeleteMedia(productId: $id, mediaIds: $ids) { deletedMediaIds mediaUserErrors { field message } }
+         }`,
+        { id, ids: existing.media.nodes.map((m: Data) => m.id) },
+      );
+      failOnUserErrors(removed.productDeleteMedia, `delete media ${handle}`);
+    }
+    if (!existing || existing.media.nodes.length === 0 || refresh) {
       for (const image of images) {
         const originalSource = await stageUpload(image);
         const result = await gql(
