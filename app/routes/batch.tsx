@@ -50,7 +50,7 @@ const CHECK_DOT =
 const INPUT =
   "h-[54px] w-full min-w-0 rounded-xl border border-[#9fb3cc] bg-white px-4 font-medium text-[#1b3a66] outline-none focus:border-ink focus:shadow-[0_0_0_3px_rgba(27,54,93,0.15)]";
 
-type View = "enter" | "passport";
+type View = "enter" | "checking" | "passport";
 
 export default function BatchPage() {
   const { code: routeCode } = useParams();
@@ -60,6 +60,8 @@ export default function BatchPage() {
   const [product, setProduct] = useState("");
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
+  const [batchCode, setBatchCode] = useState("");
+  const [progress, setProgress] = useState(0);
   const [batch, setBatch] = useState<Batch | null>(null);
 
   const open = async (rawCode: string, rawProduct: string) => {
@@ -77,8 +79,10 @@ export default function BatchPage() {
       return setError(`That batch number belongs to ${record.product}, not ${PRODUCT_NAMES[rawProduct]}. Check the product you selected.`);
     setError("");
     setBatch(record);
-    setView("passport");
-    window.scrollTo(0, 0);
+    setBatchCode(code);
+    setProgress(0);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setView(reduce ? "passport" : "checking");
   };
 
   // A batch in the URL opens straight away. The product is inferred from the batch when it isn't given.
@@ -95,8 +99,22 @@ export default function BatchPage() {
       .catch(() => setError(CHECK_FAILED));
   }, []);
 
+  // Checking animation: three checkpoints tick over, then the passport opens.
+  useEffect(() => {
+    if (view !== "checking") return;
+    const timers = [1, 2, 3].map((i) => window.setTimeout(() => setProgress(i), i * 650));
+    timers.push(
+      window.setTimeout(() => {
+        setView("passport");
+        window.scrollTo(0, 0);
+      }, 2500),
+    );
+    return () => timers.forEach((t) => window.clearTimeout(t));
+  }, [view]);
+
   const restart = () => {
     setView("enter");
+    setBatchCode("");
     setInput("");
     setError("");
     window.scrollTo(0, 0);
@@ -200,6 +218,47 @@ export default function BatchPage() {
             </div>
           </section>
         </>
+      )}
+
+      {view === "checking" && (
+        <section data-screen-label="Checking" className="flex min-h-[70vh] items-center justify-center px-5 py-10">
+          <div className="flex w-full max-w-[440px] flex-col gap-7">
+            <div className="flex flex-col gap-2 text-center">
+              <span className="text-xs font-semibold tracking-[0.14em] text-[#4f6b8f] uppercase">Opening passport</span>
+              <span className="text-[28px] font-semibold tracking-[0.08em]">{batchCode}</span>
+            </div>
+            <div className="h-1 overflow-hidden rounded-full bg-frost">
+              <div
+                className="h-full rounded-full bg-[#16a34a] transition-[width] duration-700 ease-soft"
+                style={{ width: `${Math.round((progress / 3) * 100)}%` }}
+              />
+            </div>
+            <div className="flex flex-col gap-2.5">
+              {STAGES.map((s, i) => {
+                const done = progress > i;
+                return (
+                  <div
+                    key={s.n}
+                    className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-white px-4.5 py-4 shadow-[0_18px_36px_-30px_rgba(27,54,93,0.4)] transition-opacity duration-500"
+                    style={{ opacity: progress >= i ? 1 : 0.4 }}
+                  >
+                    <span className="flex items-center gap-3 text-[15px] font-medium">
+                      <span className="text-[#4f6b8f] tabular-nums">{s.n}</span>
+                      {s.title}
+                    </span>
+                    <span
+                      className={`flex h-[26px] w-[26px] items-center justify-center rounded-full text-[13px] font-bold text-white transition-colors duration-400 ${
+                        done ? "bg-[#16a34a]" : "bg-line"
+                      }`}
+                    >
+                      {done ? "✓" : ""}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
       )}
 
       {view === "passport" && batch && (
