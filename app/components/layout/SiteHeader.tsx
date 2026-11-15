@@ -38,7 +38,7 @@ export function SiteHeader({ variant = "hero", active }: { variant?: "hero" | "s
           : "bg-transparent text-white",
       ].join(" ")}
     >
-      <div className="mx-auto grid h-full max-w-[1320px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 px-[clamp(16px,3vw,40px)] whitespace-nowrap min-[760px]:gap-6">
+      <div className="relative mx-auto grid h-full max-w-[1320px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 px-[clamp(16px,3vw,40px)] whitespace-nowrap min-[760px]:gap-6">
         <button
           type="button"
           onClick={() => setMenuOpen((open) => !open)}
@@ -74,7 +74,7 @@ export function SiteHeader({ variant = "hero", active }: { variant?: "hero" | "s
           ))}
         </nav>
 
-        <Link to="/" aria-label="VYTAE home" className="col-start-2 flex">
+        <Link to="/" aria-label="VYTAE home" className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2">
           <img
             src={solid ? "/assets/vytae-logo-black.svg" : "/assets/vytae-logo-white.svg"}
             alt="VYTAE"
