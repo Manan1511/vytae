@@ -179,7 +179,7 @@ export default function BatchPage() {
                   </div>
                   <button
                     type="submit"
-                    className="mt-1.5 h-[54px] cursor-pointer rounded-[14px] border-0 bg-[linear-gradient(180deg,#24497a_0%,#26497a_100%)] text-base font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_12px_24px_-14px_rgba(30,62,106,0.7)] hover:bg-ink-hover"
+                    className="mt-1.5 h-[54px] cursor-pointer rounded-[14px] border-0 bg-ink text-base font-semibold text-white transition-colors hover:bg-ink-hover"
                   >
                     Open passport →
                   </button>
