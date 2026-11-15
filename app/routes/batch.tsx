@@ -317,7 +317,7 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
 
           <div
             className="relative overflow-hidden rounded-[26px] border border-ink bg-white text-ink shadow-[0_40px_80px_-50px_rgba(24,48,84,0.35)] transition-[transform,opacity] duration-1000 ease-soft"
-            style={{ transform: animated ? "none" : "translateY(24px) rotate(-1.5deg)", opacity: animated ? 1 : 0 }}
+            style={{ transform: animated ? "none" : "translateY(20px)", opacity: animated ? 1 : 0 }}
           >
             <div className="flex flex-col gap-[22px] px-[26px] pt-6 pb-[26px]">
               <div className="flex items-center justify-between">
@@ -330,11 +330,8 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
               </div>
               <div
                 aria-hidden="true"
-                className="absolute top-[52px] right-[22px] flex h-28 w-28 flex-col items-center justify-center gap-0.5 rounded-full border-[2.5px] border-[#16a34a] bg-[rgba(220,252,231,0.8)] text-[#15913f] shadow-[inset_0_0_0_4px_#ffffff,inset_0_0_0_5.5px_#16a34a] transition-[transform,opacity] duration-500 ease-[cubic-bezier(.3,1.6,.5,1)] delay-[600ms]"
-                style={{
-                  transform: animated ? "rotate(-12deg) scale(1)" : "rotate(-12deg) scale(1.6)",
-                  opacity: animated ? 1 : 0,
-                }}
+                className="absolute top-[52px] right-[22px] flex h-28 w-28 flex-col items-center justify-center gap-0.5 rounded-full border-[2.5px] border-[#16a34a] bg-[rgba(220,252,231,0.8)] text-[#15913f] shadow-[inset_0_0_0_4px_#ffffff,inset_0_0_0_5.5px_#16a34a] rotate-[-12deg] transition-opacity duration-1000 ease-soft delay-300"
+                style={{ opacity: animated ? 1 : 0 }}
               >
                 <span className="text-[9px] font-bold tracking-[0.2em]">3 OF 3</span>
                 <span className="text-base font-bold">CLEARED</span>
