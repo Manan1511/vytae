@@ -87,8 +87,8 @@ export function SiteFooter() {
       <div className="mx-auto max-w-[1160px] px-[clamp(20px,3vw,40px)] pt-[clamp(44px,5vw,60px)]">
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,280px),1fr))] gap-x-[clamp(36px,5vw,80px)] gap-y-8">
           <div className="flex max-w-[300px] flex-col gap-[18px]">
-            <Link to="/" className="text-[22px] leading-none font-medium tracking-[0.34em] text-white">
-              VYTAE
+            <Link to="/" aria-label="VYTAE home" className="flex self-start">
+              <img src="/assets/vytae-logo-white.svg" alt="VYTAE" width={92} height={25} className="h-[34px] w-auto" />
             </Link>
             <p className="m-0 text-[13px] leading-[1.6] text-[rgba(255,255,255,0.78)]">
               Purposeful, science-led formulas for everyday wellness.

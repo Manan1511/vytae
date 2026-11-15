@@ -74,8 +74,14 @@ export function SiteHeader({ variant = "hero", active }: { variant?: "hero" | "s
           ))}
         </nav>
 
-        <Link to="/" className="col-start-2 pl-[0.32em] text-[17px] font-bold tracking-[0.32em] [color:inherit]">
-          VYTAE
+        <Link to="/" aria-label="VYTAE home" className="col-start-2 flex">
+          <img
+            src={solid ? "/assets/vytae-logo-black.svg" : "/assets/vytae-logo-white.svg"}
+            alt="VYTAE"
+            width={92}
+            height={25}
+            className="h-[25px] w-auto"
+          />
         </Link>
 
         <div className="col-start-3 flex items-center justify-self-end gap-[10px] text-[13px] font-medium min-[760px]:gap-[22px]">
