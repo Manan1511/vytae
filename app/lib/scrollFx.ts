@@ -51,6 +51,9 @@ export function useStackedCards(ref: RefObject<HTMLElement | null>, top: number)
         Object.assign(c.style, {
           animation: "none",
           opacity: "1",
+          // A card taller than the screen pins by its bottom edge, so it holds still for a beat before the next card
+          // covers it and the end of the card can be read.
+          marginBottom: next && c.offsetHeight > vh - top - 16 ? "96px" : "",
           position: "sticky",
           top: `${stick}px`,
           zIndex: String(i + 1),
