@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { inr, type Product } from "../../content/products";
+import { useFollowActiveTab } from "../../lib/scrollFx";
 
 // Anchor tabs that follow the section you are reading. The mini buy bar appears once the buy box has scrolled away.
 const SECTION_IDS = ["why", "science", "proof", "reviews", "faq"];
@@ -15,6 +16,8 @@ export function ProductSubnav({
 }) {
   const [active, setActive] = useState("");
   const [past, setPast] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+  useFollowActiveTab(navRef, active);
 
   useEffect(() => {
     const onScroll = () => {
@@ -42,13 +45,14 @@ export function ProductSubnav({
   return (
     <div className="sticky top-14 z-[25] border-b border-line-soft bg-[rgba(246,249,253,0.94)] shadow-[0_1px_0_#dde7f2] backdrop-blur-[12px]">
       <div className="mx-auto flex h-[60px] max-w-[1320px] items-center justify-between gap-5 px-[clamp(20px,3vw,40px)]">
-        <nav aria-label="Product sections" className="no-scrollbar flex min-w-0 gap-1 overflow-x-auto">
+        <nav ref={navRef} aria-label="Product sections" className="no-scrollbar flex min-w-0 gap-1 overflow-x-auto">
           {tabs.map((tab) => {
             const on = active === tab.id;
             return (
               <a
                 key={tab.id}
                 href={`#${tab.id}`}
+                aria-current={on ? "true" : undefined}
                 className={`flex-none rounded-full px-3.5 py-2 text-[13px] font-semibold transition-[background-color,color] duration-300 ${
                   on ? "bg-ink text-white" : "text-ink"
                 }`}

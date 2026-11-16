@@ -1,10 +1,11 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router";
 import { SiteShell } from "../components/layout/SiteShell";
 import { Eyebrow } from "../components/ui/Eyebrow";
 import { Stroke } from "../components/ui/icons";
 import type { Batch, Check, Stat } from "../content/batches";
 import { loadBatch } from "../lib/catalog";
+import { usePassportFlow, usePinnedTrack } from "../lib/scrollFx";
 import { seoMeta } from "../lib/seo";
 
 const CHECK_FAILED = "We couldn’t check that batch just now. Try again in a moment.";
@@ -274,6 +275,12 @@ export default function BatchPage() {
 
 function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () => void; onRestart: () => void }) {
   const [animated, setAnimated] = useState(false);
+  const flowRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+  const pin = usePinnedTrack(pinRef, trackRef, barRef);
+  usePassportFlow(flowRef, trackRef);
   useEffect(() => {
     const id = window.setTimeout(() => setAnimated(true), 60);
     return () => window.clearTimeout(id);
@@ -357,6 +364,15 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
       </section>
 
       <section id="record" data-screen-label="At a glance" className="mx-auto max-w-[1320px] scroll-mt-6 px-[clamp(20px,3vw,40px)] pt-[clamp(48px,6vw,80px)] pb-[clamp(40px,5vw,64px)]">
+        <div
+          ref={pinRef}
+          className="relative"
+          style={pin.narrow && pin.ch ? { height: pin.ch + pin.dist, margin: "0 -20px" } : undefined}
+        >
+          <div
+            className="flex flex-col gap-6"
+            style={pin.narrow ? { position: "sticky", top: pin.vh - pin.ch - 24, overflow: "hidden", padding: "0 20px" } : undefined}
+          >
         <div className="mb-[clamp(16px,3vw,40px)] flex flex-col items-center gap-[18px] text-center">
           <Eyebrow centered>The Batch Passport</Eyebrow>
           <h2 className="m-0 max-w-[900px] text-[clamp(40px,5.4vw,80px)] leading-none font-normal tracking-[-0.03em] text-balance">
@@ -367,10 +383,18 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
             this batch cleared: not marketing language, but the actual record.
           </p>
         </div>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,280px),1fr))] gap-6">
+        <div
+          ref={trackRef}
+          className={
+            pin.narrow
+              ? "relative grid auto-cols-[calc(100vw-72px)] grid-flow-col gap-4 will-change-transform"
+              : "grid grid-cols-[repeat(auto-fit,minmax(min(100%,280px),1fr))] gap-6"
+          }
+        >
           {STAGES.map((s, i) => (
             <a
               key={s.n}
+              data-glance=""
               href={`#stage-${i + 1}`}
               className="flex flex-col items-center gap-4 rounded-[22px] border border-ink bg-white px-8 py-10 text-center text-ink transition-colors hover:bg-[#f4f7fb]"
             >
@@ -378,22 +402,36 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
                 <Stroke size={30} strokeWidth={1.4}>
                   <path d={s.icon} />
                 </Stroke>
-                <span className="absolute -right-0.5 -bottom-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-[#16a34a] text-xs font-bold text-white shadow-[0_0_0_3px_#f6f9fd]">
+                <span data-gcheck="" className="absolute -right-0.5 -bottom-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-[#16a34a] text-xs font-bold text-white shadow-[0_0_0_3px_#f6f9fd]">
                   ✓
                 </span>
               </span>
               <span className="text-[13px] font-semibold tracking-[0.1em] text-[#4f6b8f] tabular-nums">CHECKPOINT {s.n}</span>
               <span className="text-[clamp(24px,2.2vw,30px)] leading-[1.1] font-medium tracking-[-0.02em]">{s.title}</span>
               <span className="max-w-[320px] text-base leading-[1.6] text-pretty text-[#4a6488]">{s.desc}</span>
-              <span className={`${PASS_PILL} mt-1`}>
+              <span data-gpill="" className={`${PASS_PILL} mt-1`}>
                 <span className={CHECK_DOT}>✓</span>
                 {s.result}
               </span>
             </a>
           ))}
         </div>
+            {pin.narrow && (
+              <div className="h-[3px] w-[120px] self-center overflow-hidden rounded-full bg-line">
+                <div ref={barRef} className="h-full w-full origin-left scale-x-[0.333] rounded-full bg-ink" />
+              </div>
+            )}
+          </div>
+        </div>
       </section>
 
+      <div ref={flowRef} className="relative">
+        <span aria-hidden="true" className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-line" />
+        <span
+          data-flow-fill=""
+          aria-hidden="true"
+          className="absolute top-0 left-1/2 h-0 w-0.5 -translate-x-1/2 rounded-sm bg-[linear-gradient(180deg,rgba(22,163,74,0.15),#16a34a)]"
+        />
       <Stage index={0}>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-start gap-[clamp(28px,5vw,96px)]">
           <div className="flex flex-col gap-[18px]">
@@ -515,6 +553,7 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
           evidence="Third-party lab report (PDF)"
         />
       </Stage>
+      </div>
 
       <section data-screen-label="Close" className="mx-auto max-w-[1320px] px-[clamp(20px,3vw,40px)] pt-[clamp(48px,6vw,80px)] pb-[clamp(64px,8vw,112px)]">
         <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] items-center gap-[clamp(40px,6vw,96px)] border-t border-[#dfe7f1] pt-[clamp(48px,6vw,80px)]">
@@ -582,9 +621,9 @@ function PassportView({ batch, onBack, onRestart }: { batch: Batch; onBack: () =
 function Stage({ index, children }: { index: number; children: ReactNode }) {
   const s = STAGES[index];
   return (
-    <section id={`stage-${index + 1}`} data-screen-label={`Stage ${s.n}`} className="scroll-mt-6">
+    <section id={`stage-${index + 1}`} data-screen-label={`Stage ${s.n}`} className="relative isolate scroll-mt-6">
       <div className="mx-auto max-w-[1320px] px-[clamp(20px,3vw,40px)]">
-        <div className="overflow-hidden rounded-[28px] border border-line bg-[#f5f8fc]">
+        <div data-stage="" className="relative overflow-hidden rounded-[28px] border border-line bg-[#f5f8fc]">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-white px-[clamp(20px,3vw,32px)] py-4">
             <span className="flex items-center gap-3.5">
               <span className="flex h-10 w-10 flex-none items-center justify-center rounded-full bg-ink text-[15px] font-bold text-white">
@@ -684,10 +723,13 @@ function TestRecord({
 function Handover({ from, to }: { from: string; to: string }) {
   return (
     <div className="relative mx-auto grid max-w-[1320px] grid-cols-[minmax(0,1fr)_14px_minmax(0,1fr)] items-center gap-3 px-3 py-6">
-      <span aria-hidden="true" className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-[#cddbeb]" />
       <span className="justify-self-end text-[11px] font-bold tracking-[0.16em] whitespace-nowrap text-ink-muted uppercase">Handover</span>
-      <span className="relative z-[1] flex h-3.5 w-3.5 items-center justify-center justify-self-center rounded-full border border-[#16a34a] bg-white">
-        <span className="h-1.5 w-1.5 rounded-full bg-[#16a34a]" />
+      <span
+        data-node=""
+        className="relative z-[1] flex h-3.5 w-3.5 items-center justify-center justify-self-center rounded-full border border-line bg-white transition-colors duration-500"
+      >
+        <span data-ring="" aria-hidden="true" className="absolute -inset-px rounded-full border border-[#16a34a] opacity-0" />
+        <span data-dot="" className="h-1.5 w-1.5 rounded-full bg-line transition-colors duration-500" />
       </span>
       <span className="flex min-w-0 flex-col gap-0.5 text-[13px] leading-[1.35] text-ink">
         <span>

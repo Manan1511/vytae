@@ -1,8 +1,9 @@
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router";
 import { PASSPORT_CHECKS, inr, type Product } from "../../content/products";
 import { useSavedCartStore } from "../../lib/cart";
 import { Reveal } from "../../lib/motion";
+import { useStackedCards } from "../../lib/scrollFx";
 import { whatsappUrl } from "../../lib/whatsapp";
 import { BRAND_PATHS } from "../ui/brand";
 import { Fill, Stroke } from "../ui/icons";
@@ -80,6 +81,9 @@ export function WhySection({ product, n }: { product: Product; n: SectionNumbers
 
 export function ScienceSection({ product, n }: { product: Product; n: SectionNumbers }) {
   const science = product.science;
+  const cardsRef = useRef<HTMLDivElement>(null);
+  // Sticky header (56px) plus the sub-nav (60px), with a little air.
+  useStackedCards(cardsRef, 124);
   if (!science) return null;
 
   return (
@@ -114,10 +118,11 @@ export function ScienceSection({ product, n }: { product: Product; n: SectionNum
           </div>
         </div>
 
-        <div className="flex flex-col gap-4">
+        <div ref={cardsRef} className="flex flex-col gap-4">
           {science.cards.map((card) => (
             <Reveal
               key={card.k}
+              data-stack-card=""
               className="flex flex-col overflow-hidden rounded-3xl border border-line bg-white shadow-[0_24px_48px_-36px_rgba(27,54,93,0.35)]"
             >
               <div className="flex flex-col gap-3 px-[clamp(22px,2.6vw,30px)] pt-[clamp(22px,2.6vw,30px)] pb-[clamp(18px,2vw,22px)]">
