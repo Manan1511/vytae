@@ -19,7 +19,7 @@ const frame = (fn: () => void) => {
 };
 
 // Cards that pile up under the sticky header on phones. Each card shrinks and dims slightly as the next one
-// slides over it. A card too tall to sit fully under the header is left to scroll. Cards are the [data-stack-card] children of `ref`; wider screens and reduced motion leave them alone.
+// slides over it. Cards are the [data-stack-card] children of `ref`; wider screens and reduced motion leave them alone.
 export function useStackedCards(ref: RefObject<HTMLElement | null>, top: number) {
   useEffect(() => {
     const root = ref.current;
@@ -41,12 +41,7 @@ export function useStackedCards(ref: RefObject<HTMLElement | null>, top: number)
       const list = cards();
       const vh = window.innerHeight;
       list.forEach((c, i) => {
-        // A card taller than the room under the header would have its heading tucked behind it, so it scrolls normally.
-        if (c.offsetHeight > vh - top - 16) {
-          c.removeAttribute("style");
-          return;
-        }
-        const stick = top;
+        const stick = Math.min(top, vh - c.offsetHeight - 16);
         const next = list[i + 1];
         let p = 0;
         if (next) {
